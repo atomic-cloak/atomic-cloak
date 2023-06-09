@@ -6,7 +6,7 @@ import { TransactionContext } from "@/providers/TransactionProvider";
 
 const style = {
   wrapper: `w-screen flex items-center justify-center mt-14`,
-  content: `bg-[#191B1F] w-[40rem] rounded-2xl p-4`,
+  content: `bg-[#191B1F] w-[30rem] rounded-2xl p-4`,
   transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-4 text-xl border border-[#20242A] hover:border-[#41444F]  flex justify-between`,
   transferPropInput: `bg-transparent placeholder:text-[#B2B9D2] outline-none mb-6 w-full text-2xl`,
   currencySelector: `flex w-1/4`,
