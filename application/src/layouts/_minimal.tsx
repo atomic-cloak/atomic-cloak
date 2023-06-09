@@ -1,3 +1,4 @@
+import routes from "@/config/routes";
 import Logo from "@/components/ui/logo";
 import cn from "classnames";
 import { FlashIcon } from "@/components/icons/flash";
@@ -8,7 +9,6 @@ import { useIsMounted } from "@/lib/hooks/use-is-mounted";
 import { useBreakpoint } from "@/lib/hooks/use-breakpoint";
 import { useDrawer } from "@/components/drawer-views/context";
 import { useWindowScroll } from "@/lib/hooks/use-window-scroll";
-import routes from "@/config/routes";
 
 function NotificationButton() {
   return (

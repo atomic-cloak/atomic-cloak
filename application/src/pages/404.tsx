@@ -1,16 +1,16 @@
-import type { NextPageWithLayout } from '@/types';
-import { NextSeo } from 'next-seo';
-import { useRouter } from 'next/router';
-import RootLayout from '@/layouts/_root-layout';
-import Image from '@/components/ui/image';
-import AnchorLink from '@/components/ui/links/anchor-link';
-import routes from '@/config/routes';
-import Button from '@/components/ui/button';
-import { useIsMounted } from '@/lib/hooks/use-is-mounted';
-import { useIsDarkMode } from '@/lib/hooks/use-is-dark-mode';
-import ErrorLightImage from '@/assets/images/404-light.svg';
-import ErrorDarkImage from '@/assets/images/404-dark.svg';
-import { LAYOUT_OPTIONS } from '@/lib/constants';
+import type { NextPageWithLayout } from "@/types";
+import { NextSeo } from "next-seo";
+import { useRouter } from "next/router";
+import RootLayout from "@/layouts/_root-layout";
+import Image from "@/components/ui/image";
+import AnchorLink from "@/components/ui/links/anchor-link";
+import routes from "@/config/routes";
+import Button from "@/components/ui/button";
+import { useIsMounted } from "@/lib/hooks/use-is-mounted";
+import { useIsDarkMode } from "@/lib/hooks/use-is-dark-mode";
+import ErrorLightImage from "@/assets/images/404-light.svg";
+import ErrorDarkImage from "@/assets/images/404-dark.svg";
+import { LAYOUT_OPTIONS } from "@/lib/constants";
 
 const ErrorPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -22,8 +22,8 @@ const ErrorPage: NextPageWithLayout = () => {
   return (
     <>
       <NextSeo
-        title="404 Error! No Result Found"
-        description="React Next Web3 NFT Crypto Dashboard Template"
+        title="No Result Found"
+        description="Atomic Cloak - Privacy-preserving atomic swaps"
       />
 
       <div className="flex max-w-full flex-col items-center justify-center text-center">

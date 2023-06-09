@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, createContext, ReactNode } from 'react';
-import Web3Modal from 'web3modal';
-import { ethers } from 'ethers';
+import { useEffect, useState, createContext, ReactNode } from "react";
+import Web3Modal from "web3modal";
+import { ethers } from "ethers";
 
-const web3modalStorageKey = 'WEB3_CONNECT_CACHED_PROVIDER';
+const web3modalStorageKey = "WEB3_CONNECT_CACHED_PROVIDER";
 
 export const WalletContext = createContext<any>({});
 
@@ -13,26 +13,23 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const web3Modal =
-    typeof window !== 'undefined' && new Web3Modal({ cacheProvider: true });
+    typeof window !== "undefined" && new Web3Modal({ cacheProvider: true });
 
-  /* This effect will fetch wallet address if user has already connected his/her wallet */
   useEffect(() => {
     async function checkConnection() {
       try {
         if (window && window.ethereum) {
-          // Check if web3modal wallet connection is available on storage
           if (localStorage.getItem(web3modalStorageKey)) {
             await connectToWallet();
           }
         } else {
-          console.log('window or window.ethereum is not available');
+          console.log("window or window.ethereum is not available");
         }
       } catch (error) {
-        console.log(error, 'Catch error Account is not connected');
+        console.log(error, "Catch error Account is not connected");
       }
     }
     checkConnection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setWalletAddress = async (provider: any) => {
@@ -45,7 +42,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.log(
-        'Account not connected; logged from setWalletAddress function'
+        "Account not connected; logged from setWalletAddress function"
       );
     }
   };
@@ -85,16 +82,16 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       console.log(
         error,
-        'got this error on connectToWallet catch block while connecting the wallet'
+        "got this error on connectToWallet catch block while connecting the wallet"
       );
     }
   };
 
   const subscribeProvider = async (connection: any) => {
-    connection.on('close', () => {
+    connection.on("close", () => {
       disconnectWallet();
     });
-    connection.on('accountsChanged', async (accounts: string[]) => {
+    connection.on("accountsChanged", async (accounts: string[]) => {
       if (accounts?.length) {
         setAddress(accounts[0]);
         const provider = new ethers.providers.Web3Provider(connection);

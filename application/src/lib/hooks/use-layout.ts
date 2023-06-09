@@ -1,11 +1,10 @@
 import { atom, useAtom } from "jotai";
 import { LAYOUT_OPTIONS } from "@/lib/constants";
 
-// 1. set initial atom for criptic layout
 const cripticLayoutAtom = atom(
   typeof window !== "undefined"
     ? localStorage.getItem("criptic-layout")
-    : LAYOUT_OPTIONS.MODERN
+    : LAYOUT_OPTIONS.MINIMAL
 );
 
 const cripticLayoutAtomWithPersistence = atom(
@@ -16,7 +15,6 @@ const cripticLayoutAtomWithPersistence = atom(
   }
 );
 
-// 2. useLayout hook to check which layout is available
 export function useLayout() {
   const [layout, setLayout] = useAtom(cripticLayoutAtomWithPersistence);
   return {
