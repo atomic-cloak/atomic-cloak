@@ -21,6 +21,9 @@ contract AtomicCloak {
         NORMAL
     }
 
+    address private _closerAccount;
+    address public owner;
+
     mapping(address => Swap) private swaps;
     address immutable ETH_TOKEN_CONTRACT = address(0x0);
 
@@ -32,9 +35,27 @@ contract AtomicCloak {
     uint256 public immutable curveOrder =
         0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
 
-    event Open(address indexed _swapID, address indexed _recipient);
+    event Open(
+        address indexed _swapID,
+        address indexed _sender,
+        address indexed _recipient
+    );
     event Close(address indexed _swapID, uint256 indexed _secretKey);
     event Expire(address indexed _swapID);
+
+    constructor(address _owner) {
+        owner = _owner;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only Owner can call.");
+        _;
+    }
+
+    modifier onlyFromCloserAccount() {
+        require(msg.sender == _closerAccount, "Only Closer Wallet can call.");
+        _;
+    }
 
     modifier onlyInvalidSwaps(address _swapID) {
         require(swaps[_swapID].value == 0, "Swap has been already opened.");
@@ -65,6 +86,12 @@ contract AtomicCloak {
         );
 
         _;
+    }
+
+    function setCloserAccount(address _newCloserAccount) external onlyOwner {
+        require(_closerAccount == address(0), "Closer Account already set.");
+        _closerAccount = _newCloserAccount;
+        owner = address(0);
     }
 
     /// @param _secretKey is the secret scalar that generated the commitment.
@@ -134,7 +161,7 @@ contract AtomicCloak {
 
         swaps[_swapID] = swap;
 
-        emit Open(_swapID, _recipient);
+        emit Open(_swapID, msg.sender, _recipient);
     }
 
     function openERC20(
@@ -185,7 +212,31 @@ contract AtomicCloak {
         });
         swaps[_swapID] = swap;
 
-        emit Open(_swapID, _recipient);
+        emit Open(_swapID, msg.sender, _recipient);
+    }
+
+    // This function closes the swap without verifying the secret key.
+    // THis is done to save on gas. Only the closer wallet can call this.
+    // The closer wallet verifies the secret key before calling this function.
+    // Since the closer wallet can not be updated more than once, users can be sure that the
+    // provider does not update the closer wallet to a one that skips the verification.
+    function closeNoVerify(
+        address _swapID,
+        uint256 _secretKey
+    ) public onlyOpenSwaps(_swapID) onlyFromCloserAccount {
+        Swap memory swap = swaps[_swapID];
+        require(
+            swap.tokenContract == ETH_TOKEN_CONTRACT,
+            "Only ETH swaps can be closed using Closer Wallet"
+        );
+        // TODO: implement fees to incentivize closing contracts as fast as possible.
+        // Transfer the ETH funds from this contract to the recipient.
+        swap.recipient.transfer(swap.value);
+
+        // TODO: send part of the swap value back to closer wallet, since closer wallet paid for the gas.
+
+        emit Close(_swapID, _secretKey);
+        delete swaps[_swapID];
     }
 
     function close(
