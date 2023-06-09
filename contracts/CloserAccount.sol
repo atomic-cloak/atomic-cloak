@@ -49,26 +49,6 @@ contract CloserAccount is BaseAccount {
         );
     }
 
-    /**
-     * execute a transaction (called directly from owner, or by entryPoint)
-     */
-    function execute(
-        address dest,
-        uint256 value,
-        bytes calldata func
-    ) external {
-        _requireFromEntryPointOrOwner();
-        _call(dest, value, func);
-    }
-
-    // Require the function call went through EntryPoint or owner
-    function _requireFromEntryPointOrOwner() internal view {
-        require(
-            msg.sender == address(entryPoint()) || msg.sender == owner,
-            "account: not Owner or EntryPoint"
-        );
-    }
-
     /// implement template method of BaseAccount
     function _validateSignature(
         UserOperation calldata userOp,
@@ -79,15 +59,13 @@ contract CloserAccount is BaseAccount {
             return SIG_VALIDATION_FAILED;
         return 0;
         // TODO: override with swap secret verification
+        // TODO: check that the swap exists. THis is though because we can only access local storage.
+        // TODO: check that calldata will call internal close function
     }
 
-    function _call(address target, uint256 value, bytes memory data) internal {
-        (bool success, bytes memory result) = target.call{value: value}(data);
-        if (!success) {
-            assembly {
-                revert(add(result, 32), mload(result))
-            }
-        }
+    function close(address _swapID, uint256 _secretKey) external {
+        _requireFromEntryPoint();
+        _atomicCloak.closeNoVerify(_swapID, _secretKey);
     }
 
     /**

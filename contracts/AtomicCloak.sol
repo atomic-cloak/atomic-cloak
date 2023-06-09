@@ -102,6 +102,18 @@ contract AtomicCloak {
         return getHashedCommitment(_secretKey) == _swapID;
     }
 
+    function verifyCloserOp(
+        uint256 _secretKey,
+        address _swapID
+    ) public view onlyFromCloserAccount returns (bool) {
+        Swap memory swap = swaps[_swapID];
+        require(
+            swap.tokenContract == ETH_TOKEN_CONTRACT,
+            "Only ETH swaps can be closed using Closer Wallet"
+        );
+        return getHashedCommitment(_secretKey) == _swapID;
+    }
+
     function commitmentFromSecret(
         uint256 _secretKey
     ) public pure returns (uint256, uint256) {
@@ -225,10 +237,7 @@ contract AtomicCloak {
         uint256 _secretKey
     ) public onlyOpenSwaps(_swapID) onlyFromCloserAccount {
         Swap memory swap = swaps[_swapID];
-        require(
-            swap.tokenContract == ETH_TOKEN_CONTRACT,
-            "Only ETH swaps can be closed using Closer Wallet"
-        );
+        // Note: we already verified that swap.tokenAddress == ETH_TOKEN_ADDRESS.
         // TODO: implement fees to incentivize closing contracts as fast as possible.
         // Transfer the ETH funds from this contract to the recipient.
         swap.recipient.transfer(swap.value);
