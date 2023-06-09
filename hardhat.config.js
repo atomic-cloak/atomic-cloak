@@ -18,6 +18,9 @@ module.exports = {
         },
     },
     defaultNetwork: "hardhat",
+    etherscan: {
+        apiKey: process.env.ETHERSCAN_API_KEY,
+    },
     networks: {
         hardhat: {},
         sepolia: {

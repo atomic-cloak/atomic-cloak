@@ -5,20 +5,26 @@ pragma solidity ^0.8.18;
 import "./AtomicCloak.sol";
 
 contract AtomicCloakFactory {
+    address immutable _entryPoint;
+
+    constructor(address __entryPoint) {
+        _entryPoint = __entryPoint;
+    }
+
     // Returns the address of the newly deployed contract
     function deploy(uint256 _salt) public payable returns (address) {
         // This syntax is a newer way to invoke create2 without assembly, you just need to pass salt
         // https://docs.soliditylang.org/en/latest/control-structures.html#salted-contract-creations-create2
-        return address(new AtomicCloak{salt: bytes32(_salt)}(msg.sender));
+        return address(new AtomicCloak{salt: bytes32(_salt)}(_entryPoint));
     }
 
-    // 1. Get bytecode of contract to be deployed
+    // Get bytecode of contract to be deployed
     function getBytecode() public view returns (bytes memory) {
         bytes memory bytecode = type(AtomicCloak).creationCode;
-        return abi.encodePacked(bytecode, abi.encode(msg.sender));
+        return abi.encodePacked(bytecode, abi.encode(_entryPoint));
     }
 
-    /** 2. Compute the address of the contract to be deployed
+    /** Compute the address of the contract to be deployed
         params:
             _salt: random unsigned number used to precompute an address
     */
@@ -26,10 +32,10 @@ contract AtomicCloakFactory {
         // Get a hash concatenating args passed to encodePacked
         bytes32 hash = keccak256(
             abi.encodePacked(
-                bytes1(0xff), // 0
-                address(this), // address of factory contract
+                bytes1(0xff),
+                address(this),
                 _salt,
-                keccak256(getBytecode()) // the wallet contract bytecode
+                keccak256(getBytecode())
             )
         );
         // Cast last 20 bytes of hash to address

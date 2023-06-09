@@ -3,9 +3,10 @@
 pragma solidity ^0.8.18;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@account-abstraction/contracts/core/BaseAccount.sol";
 import "./ECCUtils.sol";
 
-contract AtomicCloak {
+contract AtomicCloak is BaseAccount {
     struct Swap {
         uint256 timelock;
         address tokenContract;
@@ -21,11 +22,12 @@ contract AtomicCloak {
         NORMAL
     }
 
-    address private _closerAccount;
-    address public owner;
+    IEntryPoint private immutable _entryPoint;
 
     mapping(address => Swap) private swaps;
     address immutable ETH_TOKEN_CONTRACT = address(0x0);
+    bytes4 immutable CLOSE_NO_VERIFY_SELECTOR = 0x685da727;
+    // == bytes4(keccak256("closeNoVerify(address,uint256)"));
 
     uint256 public immutable gx =
         0xa6ecb3f599964fe04c72e486a8f90172493c21f4185f1ab9a7fe05659480c548;
@@ -43,18 +45,9 @@ contract AtomicCloak {
     event Close(address indexed _swapID, uint256 indexed _secretKey);
     event Expire(address indexed _swapID);
 
-    constructor(address _owner) {
-        owner = _owner;
-    }
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only Owner can call.");
-        _;
-    }
-
-    modifier onlyFromCloserAccount() {
-        require(msg.sender == _closerAccount, "Only Closer Wallet can call.");
-        _;
+    /// @inheritdoc BaseAccount
+    function entryPoint() public view virtual override returns (IEntryPoint) {
+        return _entryPoint;
     }
 
     modifier onlyInvalidSwaps(address _swapID) {
@@ -81,17 +74,15 @@ contract AtomicCloak {
         // Instead we use Schnorr-ish verification;
         // Note: _swapID is actually the hashed commitment
         require(
-            verifyHashedCommitment(_secretKey, _swapID),
+            getHashedCommitment(_secretKey) == _swapID,
             "Verification failed."
         );
 
         _;
     }
 
-    function setCloserAccount(address _newCloserAccount) external onlyOwner {
-        require(_closerAccount == address(0), "Closer Account already set.");
-        _closerAccount = _newCloserAccount;
-        owner = address(0);
+    constructor(address __entryPoint) {
+        _entryPoint = IEntryPoint(__entryPoint);
     }
 
     /// @param _secretKey is the secret scalar that generated the commitment.
@@ -99,18 +90,6 @@ contract AtomicCloak {
         uint256 _secretKey,
         address _swapID
     ) public pure returns (bool) {
-        return getHashedCommitment(_secretKey) == _swapID;
-    }
-
-    function verifyCloserOp(
-        uint256 _secretKey,
-        address _swapID
-    ) public view onlyFromCloserAccount returns (bool) {
-        Swap memory swap = swaps[_swapID];
-        require(
-            swap.tokenContract == ETH_TOKEN_CONTRACT,
-            "Only ETH swaps can be closed using Closer Wallet"
-        );
         return getHashedCommitment(_secretKey) == _swapID;
     }
 
@@ -227,27 +206,6 @@ contract AtomicCloak {
         emit Open(_swapID, msg.sender, _recipient);
     }
 
-    // This function closes the swap without verifying the secret key.
-    // THis is done to save on gas. Only the closer wallet can call this.
-    // The closer wallet verifies the secret key before calling this function.
-    // Since the closer wallet can not be updated more than once, users can be sure that the
-    // provider does not update the closer wallet to a one that skips the verification.
-    function closeNoVerify(
-        address _swapID,
-        uint256 _secretKey
-    ) public onlyOpenSwaps(_swapID) onlyFromCloserAccount {
-        Swap memory swap = swaps[_swapID];
-        // Note: we already verified that swap.tokenAddress == ETH_TOKEN_ADDRESS.
-        // TODO: implement fees to incentivize closing contracts as fast as possible.
-        // Transfer the ETH funds from this contract to the recipient.
-        swap.recipient.transfer(swap.value);
-
-        // TODO: send part of the swap value back to closer wallet, since closer wallet paid for the gas.
-
-        emit Close(_swapID, _secretKey);
-        delete swaps[_swapID];
-    }
-
     function close(
         address _swapID,
         uint256 _secretKey
@@ -284,5 +242,52 @@ contract AtomicCloak {
 
         emit Expire(_swapID);
         delete swaps[_swapID];
+    }
+
+    function closeNoVerify(address _swapID, uint256 _secretKey) public {
+        _requireFromEntryPoint();
+        Swap memory swap = swaps[_swapID];
+        // Note: we already verified that swap.tokenAddress == ETH_TOKEN_ADDRESS.
+        // TODO: implement fees to incentivize closing contracts as fast as possible.
+        // Transfer the ETH funds from this contract to the recipient.
+        swap.recipient.transfer(swap.value);
+
+        // TODO: send part of the swap value back to closer wallet, since closer wallet paid for the gas.
+
+        emit Close(_swapID, _secretKey);
+        delete swaps[_swapID];
+    }
+
+    /// implement template method of BaseAccount
+    function _validateSignature(
+        UserOperation calldata userOp,
+        bytes32 userOpHash
+    ) internal virtual override returns (uint256 validationData) {
+        (bytes4 _selector, address _swapID, uint256 _secretKey) = abi.decode(
+            userOp.callData,
+            (bytes4, address, uint256)
+        );
+
+        if (_selector != CLOSE_NO_VERIFY_SELECTOR) {
+            return SIG_VALIDATION_FAILED;
+        }
+
+        Swap memory swap = swaps[_swapID];
+
+        if (swaps[_swapID].value == 0) {
+            return SIG_VALIDATION_FAILED;
+        }
+
+        if (swaps[_swapID].timelock >= block.timestamp) {
+            return SIG_VALIDATION_FAILED;
+        }
+
+        if (swap.tokenContract != ETH_TOKEN_CONTRACT) {
+            return SIG_VALIDATION_FAILED;
+        }
+        if (getHashedCommitment(_secretKey) != _swapID) {
+            return SIG_VALIDATION_FAILED;
+        }
+        return 0;
     }
 }

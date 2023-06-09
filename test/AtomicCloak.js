@@ -16,9 +16,9 @@ describe("AtomicCloak", function () {
         const AtomicCloak = await ethers.getContractFactory("AtomicCloak", {
             libraries: { ECCUtils: eccUtils.address },
         });
-        const atomicCloak = await AtomicCloak.deploy();
-
-        const [deployer] = await ethers.getSigners();
+        const atomicCloak = await AtomicCloak.deploy(
+            process.env.ENTRY_POINT_ADDRESS
+        );
 
         return { atomicCloak, eccUtils };
     }
