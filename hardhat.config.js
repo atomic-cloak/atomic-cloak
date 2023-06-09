@@ -17,9 +17,13 @@ module.exports = {
             quiet: true,
         },
     },
-    defaultNetwork: "hardhat",
+    defaultNetwork: "sepolia",
     networks: {
         hardhat: {},
+        sepolia: {
+            url: process.env.ENDPOINT_URL_SEPOLIA,
+            accounts: [process.env.SK_FRITTURA],
+        },
         frittura: {
             url: process.env.ENDPOINT_URL_FRITTURA,
             accounts: [process.env.SK_FRITTURA],

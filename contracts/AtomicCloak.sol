@@ -32,9 +32,9 @@ contract AtomicCloak {
     uint256 public immutable curveOrder =
         0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
 
-    event Open(address _swapID, address _recipient);
-    event Expire(address _swapID);
-    event Close(address _swapID, uint256 _secretKey);
+    event Open(address indexed _swapID, address indexed _recipient);
+    event Close(address indexed _swapID, uint256 indexed _secretKey);
+    event Expire(address indexed _swapID);
 
     modifier onlyInvalidSwaps(address _swapID) {
         require(swaps[_swapID].value == 0, "Swap has been already opened.");
@@ -208,7 +208,7 @@ contract AtomicCloak {
         delete swaps[_swapID];
     }
 
-    function expire(
+    function redeemExpiredSwap(
         address _swapID
     ) public onlyOpenSwaps(_swapID) onlyExpirableSwaps(_swapID) {
         Swap memory swap = swaps[_swapID];
