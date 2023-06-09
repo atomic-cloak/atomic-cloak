@@ -14,8 +14,6 @@ contract AtomicCloak {
         address payable sender;
         address payable recipient;
         bytes32 secretKey;
-        bytes32 qx;
-        bytes32 qy;
         Fees fee;
     }
 
@@ -36,10 +34,12 @@ contract AtomicCloak {
     mapping(address => States) private swapStates;
     address immutable ETH_TOKEN_CONTRACT = address(0x0);
     uint256 immutable gx =
-        0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798;
+        0xa6ecb3f599964fe04c72e486a8f90172493c21f4185f1ab9a7fe05659480c548;
     uint256 immutable gy =
-        0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8;
-    uint8 immutable gyParity = 27; //==gy % 2 != 0 ? 28 : 27
+        0xdf67fd3f4255826c234a5262adc70e14a6d42f13ee55b65e885e666e1dd5d3f5;
+    uint8 immutable gyParity = 28; //==gy % 2 != 0 ? 28 : 27
+    uint256 immutable curveOrder =
+        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
 
     event Open(address _swapID, address _recipient);
     event Expire(address _swapID);
@@ -66,10 +66,10 @@ contract AtomicCloak {
     }
 
     modifier onlyWithSecretKey(address _swapID, bytes32 _secretKey) {
-        // Inject Schnorr verification;
+        // Use Schnorr verification;
         // Note: _swapID is actually the commitment
         require(ecmulVerify(_secretKey, _swapID));
-        // require(_swapID == sha256(_secretKey));
+        // require(_swapID == sha256(_secretKey)); This is the usual HTLC way.
         _;
     }
 
@@ -77,16 +77,20 @@ contract AtomicCloak {
         bytes32 _secretKey,
         address _swapID
     ) public pure returns (bool) {
-        uint256 m = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
+        return getHashedCommitment(_secretKey) == _swapID;
+    }
 
+    function getHashedCommitment(
+        bytes32 _secretKey
+    ) public pure returns (address) {
         address signer = ecrecover(
             0,
             gyParity,
             bytes32(gx),
-            bytes32(mulmod(uint256(_secretKey), gx, m))
+            bytes32(mulmod(uint256(_secretKey), gx, curveOrder))
         );
 
-        return signer == _swapID;
+        return signer;
     }
 
     function commitmentToAddress(
@@ -128,8 +132,6 @@ contract AtomicCloak {
             sender: payable(msg.sender),
             recipient: _recipient,
             secretKey: bytes32(0),
-            qx: _qx,
-            qy: _qy,
             fee: Fees.NONE
         });
 
@@ -147,12 +149,7 @@ contract AtomicCloak {
         address _tokenAddress,
         uint256 _value
     ) public payable {
-        address _swapID = address(
-            uint160(
-                uint256(keccak256(abi.encodePacked(_qx, _qy))) &
-                    0x00FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-            )
-        );
+        address _swapID = commitmentToAddress(_qx, _qy);
         // The swapID is used also as commitment
         require(
             swapStates[_swapID] == States.INVALID,
@@ -190,8 +187,6 @@ contract AtomicCloak {
             sender: payable(msg.sender),
             recipient: _recipient,
             secretKey: bytes32(0),
-            qx: _qx,
-            qy: _qy,
             fee: Fees.NONE
         });
         swaps[_swapID] = swap;
