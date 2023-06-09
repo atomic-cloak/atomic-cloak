@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
 
-// Based on contracts in https://github.com/jchittoda/eth-atomic-swap
-
 pragma solidity ^0.8.18;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -14,15 +12,7 @@ contract AtomicCloak {
         uint256 value;
         address payable sender;
         address payable recipient;
-        uint256 secretKey;
         Fees fee;
-    }
-
-    enum States {
-        INVALID,
-        OPEN,
-        CLOSED,
-        EXPIRED
     }
 
     enum Fees {
@@ -32,8 +22,8 @@ contract AtomicCloak {
     }
 
     mapping(address => Swap) private swaps;
-    mapping(address => States) private swapStates;
     address immutable ETH_TOKEN_CONTRACT = address(0x0);
+
     uint256 public immutable gx =
         0xa6ecb3f599964fe04c72e486a8f90172493c21f4185f1ab9a7fe05659480c548;
     uint256 public immutable gy =
@@ -42,35 +32,38 @@ contract AtomicCloak {
     uint256 public immutable curveOrder =
         0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
 
-    event Open(address _swapID, address _recipient);
-    event Expire(address _swapID);
-    event Close(address _swapID, uint256 _secretKey);
+    event Open(address indexed _swapID, address indexed _recipient);
+    event Close(address indexed _swapID, uint256 indexed _secretKey);
+    event Expire(address indexed _swapID);
 
     modifier onlyInvalidSwaps(address _swapID) {
-        require(swapStates[_swapID] == States.INVALID);
+        require(swaps[_swapID].value == 0, "Swap has been already opened.");
         _;
     }
 
     modifier onlyOpenSwaps(address _swapID) {
-        require(swapStates[_swapID] == States.OPEN);
-        _;
-    }
-
-    modifier onlyClosedSwaps(address _swapID) {
-        require(swapStates[_swapID] == States.CLOSED);
+        require(swaps[_swapID].value > 0, "Swap has not been opened.");
+        require(swaps[_swapID].timelock < block.timestamp, "Swap has expired.");
         _;
     }
 
     modifier onlyExpirableSwaps(address _swapID) {
-        require(block.timestamp >= swaps[_swapID].timelock);
+        require(
+            block.timestamp >= swaps[_swapID].timelock,
+            "Swap has not expired."
+        );
         _;
     }
 
     modifier onlyWithSecretKey(address _swapID, uint256 _secretKey) {
-        // Use Schnorr verification;
-        // Note: _swapID is actually the commitment
-        require(verifyHashedCommitment(_secretKey, _swapID));
         // require(_swapID == sha256(_secretKey)); This is the usual HTLC way.
+        // Instead we use Schnorr-ish verification;
+        // Note: _swapID is actually the hashed commitment
+        require(
+            verifyHashedCommitment(_secretKey, _swapID),
+            "Verification failed."
+        );
+
         _;
     }
 
@@ -123,15 +116,12 @@ contract AtomicCloak {
         // The swapID is used also as commitment
         address _swapID = commitmentToAddress(_qx, _qy);
 
-        require(
-            swapStates[_swapID] == States.INVALID,
-            "Swap has been already opened."
-        );
+        require(swaps[_swapID].value == 0, "Swap has been already opened.");
         require(
             _timelock > block.timestamp,
             "Timelock value must be in the future."
         );
-        require(msg.value > 0, "Must send ETH.");
+        require(msg.value > 0, "Value must be larger than 0.");
 
         Swap memory swap = Swap({
             timelock: _timelock,
@@ -139,12 +129,10 @@ contract AtomicCloak {
             value: msg.value,
             sender: payable(msg.sender),
             recipient: _recipient,
-            secretKey: 0,
             fee: Fees.NONE
         });
 
         swaps[_swapID] = swap;
-        swapStates[_swapID] = States.OPEN;
 
         emit Open(_swapID, _recipient);
     }
@@ -159,10 +147,7 @@ contract AtomicCloak {
     ) public payable {
         address _swapID = commitmentToAddress(_qx, _qy);
         // The swapID is used also as commitment
-        require(
-            swapStates[_swapID] == States.INVALID,
-            "Swap has been already opened."
-        );
+        require(swaps[_swapID].value == 0, "Swap has been already opened.");
         require(
             _timelock > block.timestamp,
             "Timelock value must be in the future."
@@ -175,6 +160,8 @@ contract AtomicCloak {
             msg.value == 0,
             "Cannot send ETH when swapping an ERC20 token."
         );
+
+        require(_value > 0, "Value must be larger than 0.");
 
         // Transfer value from the ERC20 trader to this contract.
         // These checks are already implied in the ETH case.
@@ -191,14 +178,12 @@ contract AtomicCloak {
         Swap memory swap = Swap({
             timelock: _timelock,
             tokenContract: _tokenAddress,
-            value: msg.value,
+            value: _value,
             sender: payable(msg.sender),
             recipient: _recipient,
-            secretKey: 0,
             fee: Fees.NONE
         });
         swaps[_swapID] = swap;
-        swapStates[_swapID] = States.OPEN;
 
         emit Open(_swapID, _recipient);
     }
@@ -208,8 +193,6 @@ contract AtomicCloak {
         uint256 _secretKey
     ) public onlyOpenSwaps(_swapID) onlyWithSecretKey(_swapID, _secretKey) {
         Swap memory swap = swaps[_swapID];
-        swaps[_swapID].secretKey = _secretKey;
-        swapStates[_swapID] = States.CLOSED;
 
         // TODO: implement fees to incentivize closing contracts as fast as possible.
         if (swap.tokenContract == ETH_TOKEN_CONTRACT) {
@@ -222,13 +205,13 @@ contract AtomicCloak {
         }
 
         emit Close(_swapID, _secretKey);
+        delete swaps[_swapID];
     }
 
-    function expire(
+    function redeemExpiredSwap(
         address _swapID
     ) public onlyOpenSwaps(_swapID) onlyExpirableSwaps(_swapID) {
         Swap memory swap = swaps[_swapID];
-        swapStates[_swapID] = States.EXPIRED;
 
         if (swap.tokenContract == ETH_TOKEN_CONTRACT) {
             // Transfer the ETH funds from this contract to the sender.
@@ -240,12 +223,6 @@ contract AtomicCloak {
         }
 
         emit Expire(_swapID);
-    }
-
-    function getSecretKey(
-        address _swapID
-    ) public view onlyClosedSwaps(_swapID) returns (uint256 secretKey) {
-        Swap memory swap = swaps[_swapID];
-        return swap.secretKey;
+        delete swaps[_swapID];
     }
 }

@@ -10,9 +10,6 @@ describe("AtomicCloak", function () {
     // We use loadFixture to run this setup once, snapshot that state,
     // and reset Hardhat Network to that snapshot in every test.
     async function deployAtomicCloak() {
-        // Contracts are deployed using the first signer/account by default
-        const [owner] = await ethers.getSigners();
-
         const ECCUtils = await ethers.getContractFactory("ECCUtils");
         const eccUtils = await ECCUtils.deploy();
 
@@ -21,10 +18,60 @@ describe("AtomicCloak", function () {
         });
         const atomicCloak = await AtomicCloak.deploy();
 
-        return { atomicCloak, owner };
+        const [deployer] = await ethers.getSigners();
+
+        return { atomicCloak, eccUtils };
     }
 
-    describe("Deployment", function () {});
+    describe("Opening", function () {
+        it("Should open a swap", async function () {
+            const { atomicCloak } = await loadFixture(deployAtomicCloak);
+            secret = ethers.utils.randomBytes(32);
+            const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
+            const recipient = ethers.Wallet.createRandom().address;
+
+            await expect(
+                atomicCloak.openETH(
+                    qx,
+                    qy,
+                    recipient,
+                    (await time.latest()) + 10000,
+                    {
+                        value: 1000,
+                    }
+                )
+            ).not.to.be.reverted;
+        });
+
+        it("Should fail to open a swap: invalid value", async function () {
+            const { atomicCloak } = await loadFixture(deployAtomicCloak);
+            secret = ethers.utils.randomBytes(32);
+            const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
+            const recipient = ethers.Wallet.createRandom().address;
+
+            await expect(
+                atomicCloak.openETH(
+                    qx,
+                    qy,
+                    recipient,
+                    (await time.latest()) + 10000
+                )
+            ).to.be.revertedWith("Value must be larger than 0.");
+        });
+
+        it("Should fail to open a swap: invalid timelock", async function () {
+            const { atomicCloak } = await loadFixture(deployAtomicCloak);
+            secret = ethers.utils.randomBytes(32);
+            const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
+            const recipient = ethers.Wallet.createRandom().address;
+
+            await expect(
+                atomicCloak.openETH(qx, qy, recipient, await time.latest(), {
+                    value: 1000,
+                })
+            ).to.be.revertedWith("Timelock value must be in the future.");
+        });
+    });
 
     describe("Commitments", function () {
         it("Should create commitment from secret", async function () {
