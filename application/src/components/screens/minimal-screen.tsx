@@ -4,8 +4,6 @@ import ComparisonChart from "@/components/ui/chats/comparison-chart";
 import Avatar from "@/components/ui/avatar";
 import OverviewChart from "@/components/ui/chats/overview-chart";
 import TopPools from "@/components/ui/top-pools";
-import TransactionTable from "@/components/transaction/transaction-table";
-import WalletCard from "@/components/ui/wallet-card";
 import TransactCoin from "@/components/ui/transact-coin";
 import PriceFeedSlider from "@/components/ui/live-price-feed";
 import { priceFeedData } from "@/data/static/price-feed";
@@ -73,14 +71,6 @@ export default function MinimalScreen() {
               <OverviewChart chartWrapperClass="h-[224px] lg:h-[214px] xl:h-[190px] 2xl:h-[214px] 3xl:h-[268px] 4xl:h-[352px]" />
               <TopPools limit={limit} />
             </div>
-          </div>
-
-          <div className="md:col-span-2 lg:col-span-full xl:col-start-1 xl:col-end-9 xl:row-start-2 xl:row-end-3 2xl:col-start-1 2xl:col-end-10 2xl:row-start-2 2xl:row-end-3 3xl:col-span-9 3xl:row-start-2 3xl:row-end-3">
-            <TransactionTable />
-          </div>
-
-          <div className="md:col-start-2 md:col-end-3 md:row-start-1 md:row-end-2 lg:col-span-6 lg:row-start-2 lg:row-end-3 xl:col-start-9 xl:col-end-13 xl:row-start-2 xl:row-end-3 2xl:col-start-10 2xl:col-end-13 2xl:row-start-2 2xl:row-end-3 3xl:col-span-3 3xl:row-start-2 3xl:row-end-3">
-            <WalletCard />
           </div>
         </div>
       </div>

@@ -20,9 +20,4 @@ export const menuItems = [
     icon: <ExchangeIcon />,
     href: routes.swap,
   },
-  {
-    name: "Liquidity",
-    icon: <PoolIcon />,
-    href: routes.liquidity,
-  },
 ];
