@@ -12,10 +12,6 @@ function renderDrawerContent(view: DRAWER_VIEW | string) {
   switch (view) {
     case "DASHBOARD_SIDEBAR":
       return <Sidebar />;
-    case "DRAWER_SEARCH":
-      return <DrawerFilters />;
-    case "DRAWER_PREVIEW_NFT":
-      return <PreviewContent />;
     default:
       return <DrawerMenu />;
   }
@@ -25,12 +21,10 @@ export default function DrawersContainer() {
   const router = useRouter();
   const { view, isOpen, closeDrawer } = useDrawer();
   useEffect(() => {
-    // close search modal when route change
     router.events.on("routeChangeStart", closeDrawer);
     return () => {
       router.events.off("routeChangeStart", closeDrawer);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <Transition appear show={isOpen} as={Fragment}>

@@ -1,26 +1,25 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { useLocalStorage } from '@/lib/hooks/use-local-storage';
-import { useDirection } from '@/lib/hooks/use-direction';
-import { useThemeColor } from '@/lib/hooks/use-theme-color';
-import { useSettingsDrawer } from '@/components/settings/settings-context';
-import { LAYOUT_OPTIONS } from '@/lib/constants';
-import { useLayout } from '@/lib/hooks/use-layout';
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useLocalStorage } from "@/lib/hooks/use-local-storage";
+import { useDirection } from "@/lib/hooks/use-direction";
+import { useThemeColor } from "@/lib/hooks/use-theme-color";
+import { useSettingsDrawer } from "@/components/settings/settings-context";
+import { LAYOUT_OPTIONS } from "@/lib/constants";
+import { useLayout } from "@/lib/hooks/use-layout";
 
 export default function SettingsButton() {
   const { opeSettings } = useSettingsDrawer();
-  const [direction] = useLocalStorage<string>('criptic-direction');
-  const [themeColor] = useLocalStorage<string>('criptic-color');
-  useDirection(direction ? direction : 'ltr');
-  useThemeColor(themeColor ? themeColor : '#14161a');
+  const [direction] = useLocalStorage<string>("criptic-direction");
+  const [themeColor] = useLocalStorage<string>("criptic-color");
+  useDirection(direction ? direction : "ltr");
+  useThemeColor(themeColor ? themeColor : "#14161a");
   // set layout based on query param
   const router = useRouter();
   const { query } = router;
   const selectedLayout = query?.layout && (query.layout as string);
   const { setLayout } = useLayout();
   useEffect(() => {
-    setLayout(selectedLayout ?? LAYOUT_OPTIONS.MODERN);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setLayout(selectedLayout ?? LAYOUT_OPTIONS.MINIMAL);
   }, [query?.layout]);
   return (
     <>

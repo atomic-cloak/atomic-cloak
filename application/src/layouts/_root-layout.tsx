@@ -7,15 +7,6 @@ import { useIsMounted } from "@/lib/hooks/use-is-mounted";
 const MinimalLayout = dynamic(() => import("@/layouts/_minimal"), {
   loading: () => <FallbackLoader />,
 });
-const ClassicLayout = dynamic(() => import("@/layouts/_classic"), {
-  loading: () => <FallbackLoader />,
-});
-const RetroLayout = dynamic(() => import("@/layouts/_retro"), {
-  loading: () => <FallbackLoader />,
-});
-const ModernLayout = dynamic(() => import("@/layouts/_modern"), {
-  loading: () => <FallbackLoader />,
-});
 
 function FallbackLoader() {
   return (
@@ -38,22 +29,6 @@ export default function RootLayout({
   // render minimal layout
   if (layout === LAYOUT_OPTIONS.MINIMAL) {
     return <MinimalLayout>{children}</MinimalLayout>;
-  }
-
-  // render retro layout
-  if (layout === LAYOUT_OPTIONS.RETRO) {
-    return (
-      <RetroLayout contentClassName={contentClassName}>{children}</RetroLayout>
-    );
-  }
-
-  // render classic layout
-  if (layout === LAYOUT_OPTIONS.CLASSIC) {
-    return (
-      <ClassicLayout contentClassName={contentClassName}>
-        {children}
-      </ClassicLayout>
-    );
   }
 
   // render default layout which is modern
