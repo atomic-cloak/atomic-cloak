@@ -1,6 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { TransactionContext } from "@/providers/TransactionProvider";
 
 const style = {
   wrapper: `p-4 w-screen flex justify-between items-center`,
