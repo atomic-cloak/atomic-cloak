@@ -14,6 +14,14 @@ const style = {
 };
 
 const Card = ({ mode }: { mode?: string }) => {
+  const {
+    isOpen,
+    isLoading,
+    formData,
+    swapDetails,
+    handleChange,
+    sendOpenSwapTransaction,
+  } = useContext(TransactionContext);
   const [isNew, setIsNew] = useState<boolean>(true);
 
   useEffect(() => {
@@ -30,9 +38,6 @@ const Card = ({ mode }: { mode?: string }) => {
     }
   }, []);
 
-  const { formData, handleChange, sendOpenSwapTransaction, isLoading, isOpen } =
-    useContext(TransactionContext);
-
   const handleSubmit = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!isLoading) {
       const { addressTo } = formData;
@@ -47,7 +52,45 @@ const Card = ({ mode }: { mode?: string }) => {
       <div className={style.content}>
         {isNew ? (
           <>
-            {isOpen ? null : (
+            {isOpen ? (
+              <>
+                <div className={style.formHeader}>
+                  <div>Value</div>
+                </div>
+                <div className={style.transferPropContainer}>
+                  <div className={style.transferPropInput2}>
+                    {swapDetails.value}
+                  </div>
+                </div>
+
+                <div className={style.formHeader}>
+                  <div>Chain</div>
+                </div>
+                <div className={style.transferPropContainer}>
+                  <div className={style.transferPropInput2}>
+                    {swapDetails.Chain}
+                  </div>
+                </div>
+
+                <div className={style.formHeader}>
+                  <div>Receiving Chain</div>
+                </div>
+                <div className={style.transferPropContainer}>
+                  <div className={style.transferPropInput2}>
+                    {swapDetails.receivingChainName}
+                  </div>
+                </div>
+
+                <div className={style.formHeader}>
+                  <div>Timestamp</div>
+                </div>
+                <div className={style.transferPropContainer}>
+                  <div className={style.transferPropInput2}>
+                    {swapDetails.timestamp}
+                  </div>
+                </div>
+              </>
+            ) : (
               <>
                 <div className={style.formHeader}>
                   <div>Quantity</div>
