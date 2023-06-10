@@ -121,7 +121,7 @@ export const TransactionProvider = ({ children }) => {
             const receipt = await trs.wait();
             console.log("receipt:", receipt);
 
-            const response = await fetch("http://localhost:7777/swap", {
+            const response = await fetch("http://localhost:7777/api/v1/swap", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
