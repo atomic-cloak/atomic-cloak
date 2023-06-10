@@ -88,18 +88,19 @@ contract AtomicCloak is BaseAccount {
         _entryPoint = IEntryPoint(__entryPoint);
     }
 
-    /// @param _secretKey is the secret scalar that generated the commitment.
-    function verifyHashedCommitment(
-        uint256 _secretKey,
-        address _swapID
-    ) public pure returns (bool) {
-        return getHashedCommitment(_secretKey) == _swapID;
-    }
-
     function commitmentFromSecret(
         uint256 _secretKey
     ) public pure returns (uint256, uint256) {
         return ECCUtils.ecmul(gx, gy, _secretKey);
+    }
+
+    function commitmentFromSharedSecret(
+        uint256 _qx,
+        uint256 _qy,
+        uint256 _sharedSecret
+    ) public pure returns (uint256, uint256) {
+        (uint256 _qsx, uint256 _qsy) = commitmentFromSecret(_sharedSecret);
+        return ECCUtils.ecadd(_qx, _qy, _qsx, _qsy);
     }
 
     function getHashedCommitment(

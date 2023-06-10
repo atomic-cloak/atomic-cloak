@@ -10,8 +10,8 @@ const style = {
 };
 
 const tokens = [
-  { name: "Ethereum", logo: "/images/eth.png", alt: "eth logo" },
-  { name: "Optimism", logo: "/images/op.png", alt: "op logo" },
+  { name: "Sepolia", logo: "/images/eth.png", alt: "eth logo" },
+  { name: "Optimism Goerli", logo: "/images/op.png", alt: "op logo" },
 ];
 
 const Dropdown: React.FC = () => {

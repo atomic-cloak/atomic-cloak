@@ -27,7 +27,6 @@ const tokens = [
 const Header = () => {
   const navItems: string[] = ["Swap", "Pool", "Vote"];
   const [selectedNav, setSelectedNav] = useState("swap");
-  const { connectWallet, currentAccount } = useContext<any>(TransactionContext);
 
   return (
     <div className={style.wrapper}>
