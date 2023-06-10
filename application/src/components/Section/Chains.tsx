@@ -8,7 +8,7 @@ const style = {
   chevronArrow: `h-5 w-5 text-gray-400`,
   chainSelector: `block truncate cursor-pointer`,
   chevronContainer: `pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2`,
-  container: `relative w-full cursor-default text-[#B2B9D2] border border-[#20242A] hover:border-[#41444F] rounded-2xl bg-[#20242A] py-4 pl-3 pr-10 text-left text-2xl`,
+  container: `relative w-full cursor-default text-white border border-[#20242A] hover:border-[#41444F] rounded-2xl bg-[#20242A] py-4 pl-3 pr-10 text-left`,
 };
 
 const chains = [
