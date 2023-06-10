@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="graphic/logo_cropped.png">
+  <img src="graphics/logo.png">
 </p>
 
 # Specifications
@@ -35,7 +35,7 @@ The privacy-protection of Atomic Cloak is based on a mixer + account abstraction
 
 ### Liquidity Provision
 
-The Atomic Cloak protocol is agnostic to how the swap counterparties agree on the swap, this logic happens off-chain in the UI.
+The Atomic Cloak protocol is agnostic to how the swap counterparties agree on the swap, this logic happens off-chain in the UI. Also the fee tiers are not enforces on the protocol level, but only on the UI level.
 
 For simplicity, our web interface implements a swap liquidity provider: an entity that hold liquidity on different chains and always accepts swap requests. It is possible to design different ways to find a swap party, but it necessarily must include a secure communication channel for cryptography reasons. In our solution, such channel is communication between UI frontend and backend.
 
@@ -56,9 +56,9 @@ The privacy and atomicity of Atomic Cloak relies on the [discrete log problem](h
 ### Atomic Cloak swap flows
 
 **Execution flow of a successful Atomic Cloak swap:**
-![](graphic/AtomicCloak_success.svg)
+![](graphics/AtomicCloak_success.svg)
 **Execution flow of a timed out Atomic Cloak swap:**
-![](graphic/AtomicCloak_fail.svg)
+![](graphics/AtomicCloak_fail.svg)
 
 ## Challenges
 
@@ -99,3 +99,8 @@ The instance of Atomic Cloak smart contract is deployed on following networks (t
 | -------- | -------------------------------------------- |
 | sepolia  | `0x2203dD12bA5deF7ace53020CDa369E5b636F9DAb` |
 | mumbai   | `0x1e03f59481c74c5eD2ce9F03bfDF84181d559A54` |
+
+## Current limitations
+
+- Although the Atomic Cloak smart contract supports the ERC-20 atomic swaps, this functionality was not thoroughly tested. Additionally, account abstraction swap close is available only for ether atomic swaps.
+- Once expired, liquidity provider has to close a swap as soon as possible. Otherwise their counterparty can burn the tokens as gas fees by calling `close` using `userOp`. This happens because `validateUserOp` cannot access the last block timestamp to check whether a swap expired.

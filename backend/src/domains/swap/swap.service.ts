@@ -18,10 +18,31 @@ export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
   )
   console.log('qsx:', qsx, 'qsy:', qsy)
 
-  const gasPrice = provider.getGasPrice()
+  const swapId = await atomicCloak.commitmentToAddress(
+    openSwapRequest.qx,
+    openSwapRequest.qy
+  )
+
+  const mirrorSwapId = await atomicCloak.commitmentToAddress(qsx, qsy)
+
+  console.log('swapId:', swapId, 'from', openSwapRequest.qx, openSwapRequest.qy)
+
   const blockNumberBefore = await provider.getBlockNumber()
   const timestampBefore = (await provider.getBlock(blockNumberBefore)).timestamp
-  const timestamp = timestampBefore + 10000
+  const timestamp = timestampBefore + 180
+  swapDB[swapId.toString('hex')] = {
+    timelock: timestamp,
+    tokenContract: '0x',
+    value: `${openSwapRequest.value}`,
+    sender: signer.address,
+    recipient: openSwapRequest.addressTo,
+    sendingChainID: openSwapRequest.sendingChainID,
+    receivingChainID: openSwapRequest.receivingChainID,
+    mirrorSwapId: mirrorSwapId
+  }
+
+  const gasPrice = provider.getGasPrice()
+
   const tx = await atomicCloak.openETH(
     qsx,
     qsy,
@@ -33,28 +54,26 @@ export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
     }
   )
   console.log('Open transaction:', tx)
-  const swapId = await atomicCloak.commitmentToAddress(openSwapRequest.qx, openSwapRequest.qy)
-  swapDB[swapId.toString('hex')] = { 
-    timelock: timestamp, 
-    tokenContract: '0x', 
-    value: `${openSwapRequest.value}`, 
-    sender: signer.address, 
-    recipient: openSwapRequest.addressTo, 
-    chainId: openSwapRequest.receivingChainID 
-  }
 }
 
 export const getMirror = async (swapId: string) => {
-  const checkGraph = async (swapID) => {
+  console.log('Requested swap ID', swapId, swapDB[swapId])
+  const checkGraph = async (swapID: string) => {
     if (!swapDB[swapID]) {
       return null
     }
-    const response = await sendGraphqlRequest(graphqlEndpoints[swapDB[swapID].chainId], `
+    console.log('GRAPH:', graphqlEndpoints[swapDB[swapID].receivingChainID])
+    const response = await sendGraphqlRequest(
+      graphqlEndpoints[swapDB[swapID].receivingChainID],
+      `
       query Query ($swapID: String!) {
         opens(where: { _swapID: $swapID }) {
           _swapID
         }
-      }`, { swapID })
+      }`,
+      { swapID: swapDB[swapID].mirrorSwapId }
+    )
+    console.log(response.data)
     return response.data.opens.length > 0
   }
 
