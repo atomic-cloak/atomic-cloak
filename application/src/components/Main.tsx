@@ -47,7 +47,7 @@ export const Main: React.FC = () => {
             className={style.transferPropInput}
             placeholder="0x..."
             value={formData.addressTo}
-            onChange={(e) => handleChange(e, "addressTo")}
+            onChange={(e) => handleChange(e.target.value, "addressTo")}
           />
         </div>
         <div className={style.formHeader}>
