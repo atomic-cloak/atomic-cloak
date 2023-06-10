@@ -39,6 +39,7 @@ export const TransactionProvider = ({ children }) => {
     const [swapDetails, setSwapDetails] = useState({
         swapID: "",
         timestamp: "",
+        chainID: "",
     });
 
     // check connection of wallet
@@ -123,17 +124,18 @@ export const TransactionProvider = ({ children }) => {
             });
             const receipt = await trs.wait();
             const swapId = await atomicCloak.commitmentToAddress(qx, qy);
+            console.log("swapId:", swapId, "from", qx, qy);
             console.log("receipt:", receipt);
             setSwapDetails({
                 receivingChainID: timestampBefore + 120,
                 swapID: swapId,
+                chainID: provider.network.name,
             });
 
             setIsLoading(false);
 
-            const response = fetch(
-                // "https://atomiccloakapi.frittura.org/api/v1/swap",
-                "http://localhost:7777/api/v1/swap",
+            const response = await fetch(
+                process.env.NEXT_PUBLIC_BACKEND_HOSTNAME + "/api/v1/swap",
                 {
                     method: "POST",
                     headers: {
@@ -153,7 +155,7 @@ export const TransactionProvider = ({ children }) => {
 
             console.log(response);
 
-            setIsPolling(true);
+            // setIsPolling(true);
             setTimeout(async () => {
                 await pollSwap(swapId);
             }, 1000);
@@ -165,17 +167,17 @@ export const TransactionProvider = ({ children }) => {
 
     const pollSwap = async (swapId) => {
         const response = await fetch(
-            "http://localhost:7777/api/v1/swap/mirror/?swapId=" + swapId
+            process.env.NEXT_PUBLIC_BACKEND_HOSTNAME +
+                "/api/v1/swap/mirror/?swapId=" +
+                swapId
         );
         const data = await response.json();
         console.log(data);
-        if (data.result != null) {
-            setIsPolling(false);
+        if (data.result) {
             console.log(swapId, data.result);
-            // router.push("/swap/" + swapID);
+            router.push("/swap/" + swapID);
+            return;
         }
-
-        if (!isPolling) return;
 
         setTimeout(async () => {
             await pollSwap(swapId);

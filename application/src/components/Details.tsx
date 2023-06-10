@@ -30,12 +30,22 @@ const Details: React.FC = () => {
             </dt>
           </div>
         ) : null}
-        {swapDetails.Timestamp ? (
+        {swapDetails.timestamp ? (
           <div className="flex justify-between">
             <dt className="flex">
               Timestamp
               <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
-                {swapDetails.Timestamp}
+                {swapDetails.timestamp}
+              </span>
+            </dt>
+          </div>
+        ) : null}
+        {swapDetails.chainID ? (
+          <div className="flex justify-between">
+            <dt className="flex">
+              Chain
+              <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
+                {swapDetails.chainID}
               </span>
             </dt>
           </div>
