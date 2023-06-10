@@ -5,7 +5,7 @@ import { TransactionContext } from "@/providers/TransactionProvider";
 
 const Modal = () => {
   const cancelButtonRef = useRef(null);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
   const { swapDetails, isCreated } = useContext(TransactionContext);
 
   useEffect(() => {
