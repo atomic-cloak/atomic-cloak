@@ -133,6 +133,7 @@ export const TransactionProvider = ({ children }) => {
                     qy: qy._hex,
                     addressTo: addressTo,
                     receivingChainID: receivingChainID,
+                    value: parsedAmount.toString(),
                 }),
             });
 
