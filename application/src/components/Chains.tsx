@@ -1,6 +1,7 @@
-import { Fragment, useState } from "react";
+import { Fragment, useContext } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { AiOutlineDown, AiOutlineCheck } from "react-icons/ai";
+import { TransactionContext } from "@/providers/TransactionProvider";
 
 const style = {
   wrapper: `relative mt-1`,
@@ -17,13 +18,18 @@ const chains = [
 ];
 
 const Chains: React.FC = () => {
-  const [selected, setSelected] = useState(chains[0]);
+  const { formData, handleChange } = useContext(TransactionContext);
 
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox
+      value={formData.receivingChainID}
+      onChange={(e) => handleChange(e.name, "receivingChainID")}
+    >
       <div className={style.wrapper}>
         <Listbox.Button className={style.container}>
-          <span className={style.chainSelector}>{selected.name}</span>
+          <span className={style.chainSelector}>
+            {formData.receivingChainID}
+          </span>
           <span className={style.chevronContainer}>
             <AiOutlineDown className={style.chevronArrow} />
           </span>
