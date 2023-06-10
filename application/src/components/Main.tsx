@@ -36,17 +36,18 @@ const customStyles = {
 export const Main: React.FC = () => {
   const router = useRouter();
 
-  const { formData, handleChange, sendTransaction, isLoading } =
+  const { formData, handleChange, sendOpenSwapTransaction, isLoading } =
     useContext(TransactionContext);
 
   const handleSubmit = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!isLoading) {
       const { addressTo, amount } = formData;
       e.preventDefault();
+      console.log("addressTo", addressTo);
 
-      if (!addressTo || !amount) return;
+    //   if (!addressTo || !amount) return;
 
-      sendTransaction();
+      sendOpenSwapTransaction();
     }
   };
 

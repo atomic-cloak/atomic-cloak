@@ -13,14 +13,17 @@ contract AtomicCloak is BaseAccount {
         uint256 value;
         address payable sender;
         address payable recipient;
-        Fees fee;
+        uint256 fee;
     }
 
-    enum Fees {
-        NONE,
-        QUICK,
-        NORMAL
-    }
+    uint256 constant NO_FEE = 0;
+    // uint256 constant TIMED_FEE = 0.00001 ether;
+    uint256 constant SMALL_FEE = 0.001 ether;
+    uint256 constant LARGE_FEE = 0.01 ether;
+
+    uint256 constant SMALL_VALUE = 0.1 ether;
+    uint256 constant MEDIUM_VALUE = 1 ether;
+    uint256 constant LARGE_VALUE = 10 ether;
 
     IEntryPoint private immutable _entryPoint;
 
@@ -139,7 +142,12 @@ contract AtomicCloak is BaseAccount {
             _timelock > block.timestamp,
             "Timelock value must be in the future."
         );
-        require(msg.value > 0, "Value must be larger than 0.");
+        require(
+            msg.value == SMALL_VALUE ||
+                msg.value == MEDIUM_VALUE ||
+                msg.value == LARGE_VALUE,
+            "Invalid message value."
+        );
 
         Swap memory swap = Swap({
             timelock: _timelock,
@@ -147,7 +155,7 @@ contract AtomicCloak is BaseAccount {
             value: msg.value,
             sender: payable(msg.sender),
             recipient: _recipient,
-            fee: Fees.NONE
+            fee: NO_FEE
         });
 
         swaps[_swapID] = swap;
@@ -199,7 +207,7 @@ contract AtomicCloak is BaseAccount {
             value: _value,
             sender: payable(msg.sender),
             recipient: _recipient,
-            fee: Fees.NONE
+            fee: NO_FEE
         });
         swaps[_swapID] = swap;
 
@@ -209,17 +217,31 @@ contract AtomicCloak is BaseAccount {
     function close(
         address _swapID,
         uint256 _secretKey
-    ) public onlyOpenSwaps(_swapID) onlyWithSecretKey(_swapID, _secretKey) {
+    )
+        public
+        payable
+        onlyOpenSwaps(_swapID)
+        onlyWithSecretKey(_swapID, _secretKey)
+    {
         Swap memory swap = swaps[_swapID];
 
         // TODO: implement fees to incentivize closing contracts as fast as possible.
         if (swap.tokenContract == ETH_TOKEN_CONTRACT) {
             // Transfer the ETH funds from this contract to the recipient.
-            swap.recipient.transfer(swap.value);
+            swap.recipient.transfer(swap.value - swap.fee);
+            if (swap.fee > 0) {
+                // Transfer the fee to the provider.
+                swap.sender.transfer(swap.fee);
+            }
         } else {
+            require(msg.value >= swap.fee, "Insufficient fee.");
             // Transfer the ERC20 funds from this contract to the recipient.
             ERC20 erc20Contract = ERC20(swap.tokenContract);
             require(erc20Contract.transfer(swap.recipient, swap.value));
+            if (msg.value > 0) {
+                // Transfer the fee to the provider.
+                swap.sender.transfer(msg.value);
+            }
         }
 
         emit Close(_swapID, _secretKey);

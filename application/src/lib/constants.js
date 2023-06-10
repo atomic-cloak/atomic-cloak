@@ -1,4 +1,4 @@
-import abi from './Transactions.json';
+import abi from "./AtomicCloak.json";
 
 export const contractABI = abi.abi;
-export const contractAddress = '0xD7eb94CF4219baD367D8E166eD55a8d9E065c87a';
+export const contractAddress = "0xc773A5BBB1010D3e6DD958D851C828184f182E0F";
