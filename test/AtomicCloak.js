@@ -37,7 +37,7 @@ describe("AtomicCloak", function () {
                     recipient,
                     (await time.latest()) + 10000,
                     {
-                        value: ethers.utils.parseUnits("1", "ether"),
+                        value: ethers.utils.parseUnits("0.01", "ether"),
                     }
                 )
             ).not.to.be.reverted;
@@ -86,7 +86,7 @@ describe("AtomicCloak", function () {
                 recipient,
                 (await time.latest()) + 10000,
                 {
-                    value: ethers.utils.parseUnits("1", "ether"),
+                    value: ethers.utils.parseUnits("0.1", "ether"),
                 }
             );
             await expect(
@@ -117,7 +117,7 @@ describe("AtomicCloak", function () {
                     recipient,
                     (await time.latest()) + 10000,
                     process.env.ERC20_ADDRESS,
-                    ethers.utils.parseUnits("1", "ether")
+                    ethers.utils.parseUnits("0.1", "ether")
                 )
             ).to.be.revertedWithoutReason();
         });
@@ -135,9 +135,9 @@ describe("AtomicCloak", function () {
                     recipient,
                     (await time.latest()) + 10000,
                     process.env.ERC20_ADDRESS,
-                    ethers.utils.parseUnits("1", "ether"),
+                    ethers.utils.parseUnits("0.1", "ether"),
                     {
-                        value: ethers.utils.parseUnits("1", "ether"),
+                        value: ethers.utils.parseUnits("0.1", "ether"),
                     }
                 )
             ).to.be.revertedWith(
@@ -158,7 +158,7 @@ describe("AtomicCloak", function () {
                     recipient,
                     await time.latest(),
                     process.env.ERC20_ADDRESS,
-                    ethers.utils.parseUnits("1", "ether")
+                    ethers.utils.parseUnits("0.1", "ether")
                 )
             ).to.be.revertedWith("Timelock value must be in the future.");
         });
@@ -295,7 +295,7 @@ describe("AtomicCloak", function () {
                     recipient,
                     (await time.latest()) + 10000,
                     {
-                        value: ethers.utils.parseUnits("1", "ether"),
+                        value: ethers.utils.parseUnits("0.1", "ether"),
                     }
                 )
             ).not.to.be.reverted;
@@ -375,7 +375,7 @@ describe("AtomicCloak", function () {
                     recipient,
                     (await time.latest()) + 10000,
                     {
-                        value: ethers.utils.parseUnits("1", "ether"),
+                        value: ethers.utils.parseUnits("0.1", "ether"),
                     }
                 )
             ).not.to.be.reverted;
@@ -446,7 +446,7 @@ describe("AtomicCloak", function () {
                     recipient,
                     (await time.latest()) + 10000,
                     {
-                        value: ethers.utils.parseUnits("1", "ether"),
+                        value: ethers.utils.parseUnits("0.1", "ether"),
                     }
                 )
             ).not.to.be.reverted;
@@ -482,7 +482,7 @@ describe("AtomicCloak", function () {
                     recipient,
                     (await time.latest()) + 8,
                     {
-                        value: ethers.utils.parseUnits("1", "ether"),
+                        value: ethers.utils.parseUnits("0.1", "ether"),
                     }
                 )
             ).not.to.be.reverted;
@@ -511,7 +511,7 @@ describe("AtomicCloak", function () {
                     recipient,
                     (await time.latest()) + 10000,
                     {
-                        value: ethers.utils.parseUnits("1", "ether"),
+                        value: ethers.utils.parseUnits("0.1", "ether"),
                     }
                 )
             ).not.to.be.reverted;
