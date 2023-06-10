@@ -11,7 +11,6 @@
   "dependencies": {
     "@emotion/react": "^11.9.3",
     "@headlessui/react": "^1.7.15",
-    "@heroicons/react": "^2.0.18",
     "@rainbow-me/rainbowkit": "^1.0.1",
     "classnames": "^2.3.2",
     "ethers": "^5.6.8",

@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { AiOutlineDown, AiOutlineCheck } from "react-icons/ai";
 
 const style = {
   wrapper: `relative mt-1`,
@@ -22,10 +22,7 @@ const Quantity: React.FC = () => {
         <Listbox.Button className={style.container}>
           <span className={style.quantitySelector}>{selected.amount}</span>
           <span className={style.chevronContainer}>
-            <ChevronUpDownIcon
-              className={style.chevronArrow}
-              aria-hidden="true"
-            />
+            <AiOutlineDown className={style.chevronArrow} />
           </span>
         </Listbox.Button>
         <Transition
@@ -56,7 +53,7 @@ const Quantity: React.FC = () => {
                     </span>
                     {selected ? (
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                        <AiOutlineCheck className="h-5 w-5" />
                       </span>
                     ) : null}
                   </>
