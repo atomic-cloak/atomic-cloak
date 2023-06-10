@@ -18,8 +18,8 @@ contract AtomicCloak is BaseAccount {
 
     uint256 constant NO_FEE = 0;
     // uint256 constant TIMED_FEE = 0.00001 ether;
-    uint256 constant SMALL_FEE = 0.001 ether;
-    uint256 constant LARGE_FEE = 0.01 ether;
+    uint256 constant SMALL_FEE = 0.00001 ether;
+    uint256 constant LARGE_FEE = 0.001 ether;
 
     uint256 constant SMALL_VALUE = 0.1 ether;
     uint256 constant MEDIUM_VALUE = 1 ether;
@@ -125,7 +125,7 @@ contract AtomicCloak is BaseAccount {
             value: msg.value,
             sender: payable(msg.sender),
             recipient: _recipient,
-            fee: NO_FEE
+            fee: SMALL_FEE
         });
 
         swaps[_swapID] = swap;
@@ -177,7 +177,7 @@ contract AtomicCloak is BaseAccount {
             value: _value,
             sender: payable(msg.sender),
             recipient: _recipient,
-            fee: NO_FEE
+            fee: SMALL_FEE
         });
         swaps[_swapID] = swap;
 
