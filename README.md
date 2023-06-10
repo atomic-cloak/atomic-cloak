@@ -44,11 +44,11 @@ For simplicity, our web interface implements a swap liquidity provider: an entit
 The privacy and atomicity of Atomic Cloak relies on the [discrete log problem](https://en.wikipedia.org/wiki/Discrete_logarithm), the same cryptography that protects Ethereum secret keys. The protocol is similar to Schnorr signature with an empty message hash.
 
 0. Alice and Bob agree for a swap.
-1. Alice chooses a secret key $s_A \in Z_q$ and computes $Q_A = G^{s_A}$, where $G$ is the generator of `secp256k1` elliptic curve group. Note that $s_A$ can not be recoveref from $Q_A$.
+1. Alice chooses a secret key $s_A \in Z^*_q$ and computes $Q_A = G^{s_A}$, where $G$ is the generator of `secp256k1` elliptic curve group. Note that $s_A$ can not be recoveref from $Q_A$.
 2. Alice creates an atomic swap with Bob by locking tokens in a contract. Tokens can be withdrawn:
     - either by Bob after presenting $s_A$, or
     - after timeout period by Alice.
-3. Alice generates random $z\in Z_q$ and sends it together with her preferred receiving address to Bob.
+3. Alice generates random $z\in Z^*_q$ and sends it together with her preferred receiving address to Bob.
 4. Bob computes $Q_B = Q_A G^z$ and creates an atomic swap with Alice's receiving address. The timeout must be shorter than on Alice's contract.
 5. At this point Alice can compute $Q_B$ and withdraw from Bob's contract by presenting $s_B = s_A + z$, since $G^{s_B} = Q_B$. In doing so, she reveals $s_B$.
 6. Bob can now compute $s_A = s_B - z$ and withdraw from Alice's contract.
