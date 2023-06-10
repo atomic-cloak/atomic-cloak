@@ -95,6 +95,7 @@ At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believ
 
 The instance of Atomic Cloak smart contract is deployed on following networks (to be updated):
 
-| Networks | Address |
-| -------- | ------- |
-| sepolia  | `0x...` |
+| Networks | Address                                      |
+| -------- | -------------------------------------------- |
+| sepolia  | `0xF1e9A2223e58A38DAC68F558Ba1Fb4A418f5FCD5` |
+| mumbai   | `0x1e03f59481c74c5eD2ce9F03bfDF84181d559A54` |
