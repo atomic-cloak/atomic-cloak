@@ -6,6 +6,34 @@ import { getAtomicCloakContract } from '../blockchain/blockchain.service'
 
 const swapDB = {}
 
+const closeSwap = async (swapId, swapData) => {
+  const senderSwapsResponse = await sendGraphqlRequest(
+    graphqlEndpoints[swapData.receivingChainID],
+    `
+    query Query ($swapID: String!) {
+      closes(where: { _swapID: $swapID }) {
+        _swapID
+        _secretKey
+      }
+    }
+  `,
+    { swapID: swapData.mirrorSwapId }
+  )
+  const secretKey = senderSwapsResponse.data.closes[0]?._secretKey
+  console.log(secretKey)
+  if (secretKey) {
+    const { provider, signer, atomicCloak } = await getAtomicCloakContract(
+      swapData.sendingChainID
+    )
+    const tx = await atomicCloak.close(
+      swapId, secretKey
+    )
+    console.log(tx)
+  } else {
+    setTimeout(() => closeSwap(swapId, swapData), 1000)
+  }
+}
+
 export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
   const { provider, signer, atomicCloak } = await getAtomicCloakContract(
     openSwapRequest.receivingChainID
@@ -79,54 +107,16 @@ export const getMirror = async (swapId: string) => {
 
   if (!swapId.startsWith('0x')) {
     if (await checkGraph(`0x${swapId}`)) {
+      closeSwap(`0x${swapId}`, swapDB[`0x${swapId}`])
       return swapDB[`0x${swapId}`]
     }
     return null
   }
 
   if (await checkGraph(swapId)) {
+    closeSwap(swapId, swapDB[swapId])
     return swapDB[swapId]
   }
   return null
 }
 
-export const getOpenSwapsBySender = async (
-  senderAddress: string,
-  chainFrom: string,
-  chainTo: string
-) => {
-  const fromEndpoint = graphqlEndpoints[chainFrom]
-  const toEndpoint = graphqlEndpoints[chainTo]
-
-  const senderSwapsResponse = await sendGraphqlRequest(
-    fromEndpoint,
-    `
-    query Query ($address: String!) {
-      opens(where: { _sender: $address }) {
-        _swapID
-      }
-    }
-  `,
-    { address: senderAddress }
-  )
-
-  const senderSwapIds = senderSwapsResponse.data.opens.map(
-    (open) => open._swapID
-  )
-
-  const closedSwapsResponse = await sendGraphqlRequest(
-    toEndpoint,
-    `
-    query Query ($ids: [ID!]!) {
-      closes(where: {_swapID_in: $ids}) {
-        id
-      }
-    }
-  `,
-    { ids: senderSwapIds }
-  )
-
-  const closedSwapIds = closedSwapsResponse.data.opens.map(
-    (open) => open._swapID
-  )
-}
