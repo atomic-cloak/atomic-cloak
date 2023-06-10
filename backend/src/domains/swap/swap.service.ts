@@ -1,37 +1,32 @@
 import { ethers } from 'ethers'
-import {
-  contractABI,
-  contractAddresses,
-  rpcProviders,
-  graphqlEndpoints
-} from '../../constants'
+import { graphqlEndpoints } from '../../constants'
 import { sendGraphqlRequest } from '../../graphql/request'
 import { OpenSwapRequest } from './types'
-
-const getAtomicCloakContract = (chainId) => {
-  const provider = new ethers.providers.JsonRpcProvider(rpcProviders[chainId])
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? '', provider)
-  const signer = wallet.connect(provider)
-  const atomicCloak = new ethers.Contract(contractAddresses[chainId], contractABI, signer)
-  return { provider, signer, atomicCloak }
-}
+import { getAtomicCloakContract } from '../blockchain/blockchain.service'
 
 export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
-  const { provider, atomicCloak } = getAtomicCloakContract(openSwapRequest.receivingChainID)
+  const { provider, atomicCloak } = await getAtomicCloakContract(
+    openSwapRequest.receivingChainID
+  )
+  console.log('Getting commitment', openSwapRequest.z)
   const [qsx, qsy] = await atomicCloak.commitmentFromSharedSecret(
     openSwapRequest.qx,
     openSwapRequest.qy,
-    openSwapRequest.z
+    ethers.utils.randomBytes(32)
   )
-  console.log('qsx', qsx, 'qsy', qsy)
+  console.log('qsx', qsx, 'qsy', qsy, 'amount', openSwapRequest.value, ethers.utils.parseUnits(openSwapRequest.value, 'ether'))
 
+  const gasPrice = provider.getGasPrice()
+  const blockNumberBefore = await provider.getBlockNumber()
+  const timestampBefore = (await provider.getBlock(blockNumberBefore)).timestamp
   const tx = await atomicCloak.openETH(
     qsx,
     qsy,
     openSwapRequest.addressTo,
-    (await provider.getBlockNumber()) + 10000,
+    timestampBefore + 10000,
     {
-      value: ethers.utils.parseUnits(openSwapRequest.amount, 'ether')
+      value: `${openSwapRequest.value}`,
+      gasPrice
     }
   )
   console.log('Open transaction:', tx)

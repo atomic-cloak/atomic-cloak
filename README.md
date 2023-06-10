@@ -1,3 +1,5 @@
+# Specificaitons
+
 ## Atomic Cloak
 
 _Mixer-style privacy preserving cross-chain atomic swaps. Withdraw ETH and ERC-20 from L2 anonymously and instantly via a liquidity provider._
@@ -27,23 +29,51 @@ Our solution extends the idea of HTLC to Schnorr Timelocked Contracts, based on 
 
 The privacy-protection of Atomic Cloak is based on a mixer + account abstraction. From the outside, STLC counterparties cannot be identified and all requests created at the same time cannot be distinguished from other requests of the same value tier. Also it is impossible to determine the destination chain of tokens, so several cross-chain swaps with random wait times can obfuscate token sender very well.
 
+### Liquidity Provision
+
+The Atomic Cloak protocol is agnostic to how the swap counterparties agree on the swap, this logic happens off-chain in the UI.
+
+For simplicity, our web interface implements a swap liquidity provider: an entity that hold liquidity on different chains and always accepts swap requests. It is possible to design different ways to find a swap party, but it necessarily must include a secure communication channel for cryptography reasons. In our solution, such channel is communication between UI frontend and backend.
+
+### Cryptography
+
+The privacy and atomicity of Atomic Cloak relies on the [discrete log problem](https://en.wikipedia.org/wiki/Discrete_logarithm), the same cryptography that protects Ethereum secret keys. The protocol is similar to Schnorr signature with an empty message hash.
+
+0. Alice and Bob agree for a swap.
+1. Alice chooses a secret key $s_A \in Z_q$ and computes $Q_A = G^{s_A}$, where $G$ is the generator of `secp256k1` elliptic curve group. Note that $s_A$ can not be recoveref from $Q_A$.
+2. Alice creates an atomic swap with Bob by locking tokens in a contract. Tokens can be withdrawn:
+    - either by Bob after presenting $s_A$, or
+    - after timeout period by Alice.
+3. Alice generates random $z\in Z_q$ and sends it together with her preferred receiving address to Bob.
+4. Bob computes $Q_B = Q_A G^z$ and creates an atomic swap with Alice's receiving address. The timeout must be shorter than on Alice's contract.
+5. At this point Alice can compute $Q_B$ and withdraw from Bob's contract by presenting $s_B = s_A + z$, since $G^{s_B} = Q_B$. In doing so, she reveals $s_B$.
+6. Bob can now compute $s_A = s_B - z$ and withdraw from Alice's contract.
+
+### Atomic Cloak swap flows
+__Execution flow of a successful Atomic Cloak swap:__
+![](graphic/AtomicCloak_success.svg)
+__Execution flow of a timed out Atomic Cloak swap:__
+![](graphic/AtomicCloak_fail.svg)
+
 ## Challenges
 
-Atomic swaps have drawbacks:
+We faced several challenges :
 
-1. Finding a counterparty for a swap of given amount between different chains could be hard.
-2. Opening a swap requires private channel of communication, which makes UI harder.
+1. Efficiently implementing cryptography for Schnorr Timelocked Contracts.
+2. Indexing all relevant on-chain events (opening and closing) to provide a comfortable UI.
 3. Closing an anonymized swap could still be tracked to the gas payer and thus to the closer.
-4. Only fungible tokens could be transferred.
-5. Privacy is good only with sufficient traffic.
+4. Gas-efficiently opening many STLCs for liquidity providers.
+5. Deploying AtomicCloak contract to different chains with the same address.
 
-Atomic Cloak alleviates challenges 1, 2 and 3, challenges 4 and 5 could be tackled in the future.
+__Solution to 1__: Abuse `ecrecover` opcode to multiply an EC point with a scalar as explained [here](https://ethresear.ch/t/you-can-kinda-abuse-ecrecover-to-do-ecmul-in-secp256k1-today/2384/4).
 
-**Solution to 1**: liquidity providers. LPs have tokens on all supported chains and accept all requests for swaps for a fee. LPs offer a centralization risk: they can deanonimize the swaps that they facilitated but cannot steal funds. In Atomic Cloak protocol, anyone can be a liquidity provider.
-
-**Solution to 2**: we run only one LP now and offer UI to interact with only one provider. This is not seen from deployed smart contracts, they are LP agnostic. UI frontend to backend communication plays the role of a secure communication channel between swap peers.
+__Solution to 2__: use The Graph to listen to emitted events.
 
 **Solution to 3**: account abstraction. Using [EIP-4337][https://eips.ethereum.org/EIPS/eip-4337] protocol, the SLT contract itself can pay swap closure fee for a small fraction of the swap amount. To close a swap, a user creates a UserOperation with the reveal data, and can withdraw tokens to a fresh empty account. Note that a user can also close with a transaction (e.g. to use on chains with no AA features), but this will provide risks for privacy.
+
+__Solution to 4__: account abstraction. We use transaction batching feature of EIP-4337 to open many atomic swaps with a single transaction.
+
+__Solution to 5__: deploy everything via factories that use `CREATE2` opcode.
 
 ## Future ideas
 
@@ -53,3 +83,14 @@ At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believ
 2. **Exchange.** Allow opening contracts hold different tokens (e.g. different ERC-20, or ether and ERC-20), as agreed off-chain by peers. This would further boost privacy and allow token exchange functionality.
 3. **Add Noise Creators.** To boost privacy, create a service to create noise swaps. Noise creators will open and close swaps among different chains, so other swaps could be obfuscated among the noise.
 4. **Do general reveal of secret.** The protocol could be generalized beyond atomic token swaps by replacing the swap closing logic. In this way other atomic revals of secret could be implemented.
+
+# Development
+
+## Deployments
+
+The instance of Atomic Cloak smart contract is deployed on following networks:
+
+
+| Networks       |            Address      |
+|----------------|-------------------------|
+| sepolia        |  `0x...`                |

@@ -11,3 +11,5 @@ typechain-types
 cache
 artifacts
 app
+
+yarn.lock
