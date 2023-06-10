@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from "react";
+import { Fragment, useContext } from "react";
 import { AiOutlineDown } from "react-icons/ai";
 import { Listbox, Transition } from "@headlessui/react";
 import { TransactionContext } from "@/providers/TransactionProvider";
@@ -19,7 +19,7 @@ const chains = [
   { name: "Gnosis Chiado" },
 ];
 
-const Chains: React.FC = () => {
+const Chains = () => {
   const { formData, handleChange } = useContext(TransactionContext);
 
   return (

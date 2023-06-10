@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import Chains from "@/components/Section/Chains";
 import Quantity from "@/components/Section/Quantity";
@@ -13,7 +13,7 @@ const style = {
   swapButton: `bg-[#3898FF] my-2 rounded-2xl py-4 px-8 text-xl font-semibold flex items-center justify-center cursor-pointer border border-[#2172E5] hover:border-[#234169]`,
 };
 
-const Card: React.FC = ({ mode }: { mode?: string }) => {
+const Card = ({ mode }: { mode?: string }) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   useEffect(() => {

@@ -1,8 +1,6 @@
-import React from "react";
-
-const Loader: React.FC = () => {
+const Loader = () => {
   return (
-    <div className="absolute bg-white bg-opacity-60 z-10 h-full w-full flex items-center justify-center">
+    <div className="absolute z-10 h-full w-full flex items-center justify-center">
       <div className="flex items-center">
         <svg
           className="animate-spin h-8 w-8 text-[#3898FF]"

@@ -2,13 +2,9 @@ import React, { useContext } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Header from "@/components/Header";
-import Loader from "@/components/Loader";
 import { Main } from "@/components/Main";
-import { TransactionContext } from "@/providers/TransactionProvider";
 
 const Home: NextPage = () => {
-  const { isLoading } = useContext(TransactionContext);
-
   return (
     <>
       <Head>
@@ -18,7 +14,6 @@ const Home: NextPage = () => {
       <Header />
       <main>
         <Main />
-        {isLoading ? <Loader /> : null}
       </main>
     </>
   );
