@@ -94,7 +94,9 @@ const Header = () => {
                         type="button"
                         className={`${style.buttonAccent} ${style.buttonPadding}`}
                       >
-                        Wrong network
+                        <div className={`${style.buttonTextContainer}`}>
+                          Wrong Network
+                        </div>
                       </button>
                     );
                   }

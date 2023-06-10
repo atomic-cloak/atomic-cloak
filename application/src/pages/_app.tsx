@@ -15,7 +15,7 @@ import {
 import { publicProvider } from "wagmi/providers/public";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { TransactionProvider } from "@/providers/TransactionProvider";
-import { mainnet, polygon, optimism, arbitrum, goerli } from "wagmi/chains";
+import { mainnet, polygon, optimism, arbitrum, sepolia } from "wagmi/chains";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -23,7 +23,7 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
     polygon,
     optimism,
     arbitrum,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [goerli] : []),
+    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [sepolia] : []),
   ],
   [publicProvider()]
 );
