@@ -37,7 +37,7 @@ For simplicity, our web interface implements a swap liquidity provider: an entit
 
 The privacy and atomicity of Atomic Cloak relies on the [discrete log problem](https://en.wikipedia.org/wiki/Discrete_logarithm), the same cryptography that protects Ethereum secret keys. The protocol is similar to Schnorr signature with an empty message hash.
 
-1. Alice chooses a secret key $$s_A \in \Z_q$$.
+1. Alice chooses a secret key $s_A \in \Z_q$.
 
 ### Atomic Cloak swap flows
 __Execution flow of a successful Atomic Cloak swap:__
