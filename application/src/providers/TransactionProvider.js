@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import fetch from "node-fetch";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
-import { contractABI, contractAddress } from "@/lib/constants";
+import { contractABI, ATOMIC_CLOAK_ADDRESS_SEPOLIA } from "@/lib/constants";
 
 export const TransactionContext = React.createContext();
 
@@ -18,7 +18,7 @@ const getAtomicCloakContract = () => {
     const provider = new ethers.providers.Web3Provider(eth);
     const signer = provider.getSigner();
     const transactionContract = new ethers.Contract(
-        contractAddress,
+        ATOMIC_CLOAK_ADDRESS_SEPOLIA,
         contractABI,
         signer
     );
