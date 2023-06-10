@@ -87,12 +87,10 @@ export const TransactionProvider = ({ children }) => {
     console.log("sendOpenSwapTransaction");
     try {
       if (!metamask) return alert("Please install metamask ");
-
       const { addressTo, amount, receivingChainID } = formData;
 
       // get AtomicCloak contract
       const atomicCloak = getAtomicCloakContract();
-
       const parsedAmount = ethers.utils.parseEther(amount);
 
       const secret = ethers.utils.randomBytes(32);
@@ -118,14 +116,14 @@ export const TransactionProvider = ({ children }) => {
       setIsLoading(true);
       setFormData({
         addressTo: "",
-        amount: "",
-        receivingChainID: "",
+        amount: "0.01",
+        receivingChainID: "Sepolia",
       });
       const receipt = await trs.wait();
       console.log("receipt:", receipt);
       setSwapDetails({
         receivingChainID: timestampBefore + 120,
-        swapID: await commitmentToAddress(qx, qy),
+        swapID: await atomicCloak.commitmentToAddress(qx, qy),
       });
 
       const response = await fetch(
