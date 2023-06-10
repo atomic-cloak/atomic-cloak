@@ -31,10 +31,10 @@ async function main() {
                     "000000000000000000000000" +
                     hashedCommitment.slice(2) +
                     Buffer.from(secret).toString("hex"),
-                callGasLimit: "0x814C",
-                verificationGasLimit: "0xAA38",
-                preVerificationGas: "0xAA38",
-                maxFeePerGas: "0x10",
+                callGasLimit: "0x214C10",
+                verificationGasLimit: "0x06E360",
+                preVerificationGas: "0x06E360",
+                maxFeePerGas: "0x20",
                 maxPriorityFeePerGas: "0x0",
                 paymasterAndData: "0x",
                 signature: "0x",

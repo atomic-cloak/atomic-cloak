@@ -265,10 +265,11 @@ contract AtomicCloak is BaseAccount {
         UserOperation calldata userOp,
         bytes32 userOpHash
     ) internal virtual override returns (uint256 validationData) {
-        (bytes4 _selector, address _swapID, uint256 _secretKey) = abi.decode(
-            userOp.callData,
-            (bytes4, address, uint256)
+        bytes4 _selector = bytes4(userOp.callData[:4]);
+        address _swapID = address(
+            uint160(uint256(bytes32(userOp.callData[4:36])))
         );
+        uint256 _secretKey = uint256(bytes32(userOp.callData[36:68]));
 
         if (_selector != CLOSE_NO_VERIFY_SELECTOR) {
             return SIG_VALIDATION_FAILED;
@@ -294,10 +295,6 @@ contract AtomicCloak is BaseAccount {
     }
 
     function validateSignature_test(UserOperation calldata userOp) public {
-        // (bytes4 _selector, address _swapID, uint256 _secretKey) = abi.decode(
-        //     userOp.callData,
-        //     (bytes4, address, uint256)
-        // );
         bytes4 _selector = bytes4(userOp.callData[:4]);
         address _swapID = address(
             uint160(uint256(bytes32(userOp.callData[4:36])))
