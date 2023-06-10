@@ -1,11 +1,11 @@
-import abi from '../../application/src/lib/AtomicCloak.json'
+import abi from './data/abi/AtomicCloak.json'
 
 export const graphqlEndpoints = {
   '0xaa36a7': 'https://api.studio.thegraph.com/proxy/48185/atomiccloak/v0.0.6',
   '0x13881': ''
 }
 
-export const contractABI = abi.abi
+export const atomicCloakABI = abi.abi
 
 export const contractAddresses = {
   '0xaa36a7': process.env.ATOMIC_CLOAK_ADDRESS_SEPOLIA,

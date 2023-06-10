@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import {
-  contractABI,
+  atomicCloakABI,
   contractAddresses,
   rpcProviders,
   graphqlEndpoints
@@ -10,14 +10,20 @@ import { OpenSwapRequest } from './types'
 
 const getAtomicCloakContract = (chainId) => {
   const provider = new ethers.providers.JsonRpcProvider(rpcProviders[chainId])
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? '', provider)
+  const wallet = new ethers.Wallet(process.env.BACKEND_PRIVATE_KEY ?? '', provider)
   const signer = wallet.connect(provider)
-  const atomicCloak = new ethers.Contract(contractAddresses[chainId], contractABI, signer)
+  const atomicCloak = new ethers.Contract(
+    contractAddresses[chainId],
+    atomicCloakABI,
+    signer
+  )
   return { provider, signer, atomicCloak }
 }
 
 export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
-  const { provider, atomicCloak } = getAtomicCloakContract(openSwapRequest.receivingChainID)
+  const { provider, atomicCloak } = getAtomicCloakContract(
+    openSwapRequest.receivingChainID
+  )
   const [qsx, qsy] = await atomicCloak.commitmentFromSharedSecret(
     openSwapRequest.qx,
     openSwapRequest.qy,
