@@ -5,7 +5,7 @@ export const getAtomicCloakContract = async (chainId) => {
   const contractAddresses = {
     11155111: process.env.ATOMIC_CLOAK_ADDRESS_SEPOLIA,
     80001: process.env.ATOMIC_CLOAK_ADDRESS_MUMBAI,
-    420: process.env.ATOMIC_CLOAK_ADDRESS_OPTIMISM
+    420: process.env.ATOMIC_CLOAK_ADDRESS_OPTIMISM_GOERLI
   }
 
   const provider = new ethers.providers.JsonRpcProvider(rpcProviders[chainId])
@@ -19,6 +19,6 @@ export const getAtomicCloakContract = async (chainId) => {
     atomicCloakABI,
     signer
   )
-  console.log("BALANCE: ", await signer.getBalance())
+  console.log('BALANCE: ', await signer.getBalance())
   return { provider, signer, atomicCloak }
 }
