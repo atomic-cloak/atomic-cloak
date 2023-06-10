@@ -12,9 +12,9 @@ const style = {
 };
 
 const chains = [
-  { name: "Goerli", logo: "/images/eth.png", alt: "eth logo" },
-  { name: "Sepolia", logo: "/images/eth.png", alt: "eth logo" },
-  { name: "Mumbai", logo: "/images/matic.png", alt: "matic logo" },
+  { name: "Sepolia", alt: "eth logo" },
+  { name: "Goerli", alt: "eth logo" },
+  { name: "Mumbai", alt: "matic logo" },
 ];
 
 const Chains: React.FC = () => {
