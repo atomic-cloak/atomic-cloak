@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import fetch from "node-fetch";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
-import { contractABI, contractAddress } from "@/lib/constants";
+import { contractABI, ATOMIC_CLOAK_ADDRESS_SEPOLIA } from "@/lib/constants";
 
 export const TransactionContext = React.createContext();
 
@@ -18,7 +18,7 @@ const getAtomicCloakContract = () => {
     const provider = new ethers.providers.Web3Provider(eth);
     const signer = provider.getSigner();
     const transactionContract = new ethers.Contract(
-        contractAddress,
+        ATOMIC_CLOAK_ADDRESS_SEPOLIA,
         contractABI,
         signer
     );
@@ -32,7 +32,7 @@ export const TransactionProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         addressTo: "",
-        amount: "",
+        amount: "0.01",
         receivingChainID: "",
     });
 
@@ -96,7 +96,6 @@ export const TransactionProvider = ({ children }) => {
             const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
             console.log("qx:", qx._hex);
             console.log("qy:", qy._hex);
-            const recipient = "0xBDd182877dEc564d96c4A6e21920F237487d01aD";
             const provider = new ethers.providers.Web3Provider(eth);
             const blockNumBefore = await provider.getBlockNumber();
             const blockBefore = await provider.getBlock(blockNumBefore);
@@ -105,7 +104,7 @@ export const TransactionProvider = ({ children }) => {
             const trs = await atomicCloak.openETH(
                 qx,
                 qy,
-                recipient,
+                addressTo,
                 timestampBefore + 120,
                 {
                     value: parsedAmount,
@@ -121,7 +120,7 @@ export const TransactionProvider = ({ children }) => {
             const receipt = await trs.wait();
             console.log("receipt:", receipt);
 
-            const response = await fetch("http://localhost:7777/swap", {
+            const response = await fetch("http://localhost:7777/api/v1/swap", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -148,10 +147,10 @@ export const TransactionProvider = ({ children }) => {
     };
 
     // handle form data
-    const handleChange = (e, name) => {
+    const handleChange = (value, name) => {
         setFormData((prevState) => ({
             ...prevState,
-            [name]: e.target.value,
+            [name]: value,
         }));
     };
 

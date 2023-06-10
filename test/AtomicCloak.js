@@ -281,7 +281,7 @@ describe("AtomicCloak", function () {
         });
     });
 
-    describe.only("Validate user operations", function () {
+    describe("Validate user operations", function () {
         it("Should validate signature", async function () {
             const { atomicCloak } = await loadFixture(deployAtomicCloak);
             const secret = ethers.utils.randomBytes(32);
@@ -480,7 +480,7 @@ describe("AtomicCloak", function () {
                     qx,
                     qy,
                     recipient,
-                    (await time.latest()) + 8,
+                    (await time.latest()) + 12,
                     {
                         value: ethers.utils.parseUnits("0.1", "ether"),
                     }
@@ -493,7 +493,7 @@ describe("AtomicCloak", function () {
             );
             const delay = (ms) =>
                 new Promise((resolve) => setTimeout(resolve, ms));
-            await delay(2000);
+            await delay(12000);
             await expect(atomicCloak.redeemExpiredSwap(hashedCommitment)).not.to
                 .be.reverted;
         });
