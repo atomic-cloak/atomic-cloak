@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { TransactionContext } from "@/providers/TransactionProvider";
 
 const style = {
-  transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-4 text-xl border border-[#20242A]`,
+  transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-5 text-xl border border-[#20242A] hover:border-[#41444F]`,
   transferPropInput: `bg-transparent placeholder:text-[#B2B9D2] outline-none w-full text-2xl`,
 };
 
@@ -20,12 +20,12 @@ const Details: React.FC = () => {
             </span>
           </dt>
         </div>
-        {swapDetails.swapID ? (
+        {swapDetails.receivingChainName ? (
           <div className="flex justify-between">
             <dt className="flex">
-              Swap ID
+              Chain
               <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
-                {swapDetails.swapID}
+                {swapDetails.receivingChainName}
               </span>
             </dt>
           </div>
@@ -40,12 +40,12 @@ const Details: React.FC = () => {
             </dt>
           </div>
         ) : null}
-        {swapDetails.receivingChainName ? (
+        {swapDetails.swapID ? (
           <div className="flex justify-between">
             <dt className="flex">
-              Chain
+              Swap ID
               <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
-                {swapDetails.receivingChainName}
+                {swapDetails.swapID}
               </span>
             </dt>
           </div>

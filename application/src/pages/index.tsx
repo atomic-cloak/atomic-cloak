@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
+import Modal from "@/components/Modal";
 import Header from "@/components/Header";
 import Loader from "@/components/Loader";
 import { Main } from "@/components/Main";
@@ -20,6 +21,7 @@ const Home: NextPage = () => {
         <Main />
         {isLoading ? <Loader /> : null}
       </main>
+      <Modal />
     </>
   );
 };
