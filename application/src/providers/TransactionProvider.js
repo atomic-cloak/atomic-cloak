@@ -34,7 +34,7 @@ export const TransactionProvider = ({ children }) => {
     const [formData, setFormData] = useState({
         addressTo: "",
         amount: "0.01",
-        receivingChainID: "Sepolia",
+        receivingChainName: "Sepolia",
     });
     const [swapDetails, setSwapDetails] = useState({
         swapID: "",
@@ -89,7 +89,7 @@ export const TransactionProvider = ({ children }) => {
         console.log("sendOpenSwapTransaction");
         try {
             if (!metamask) return alert("Please install metamask ");
-            const { addressTo, amount, receivingChainID } = formData;
+            const { addressTo, amount, receivingChainName } = formData;
 
             // get AtomicCloak contract
             const atomicCloak = getAtomicCloakContract();
@@ -120,19 +120,25 @@ export const TransactionProvider = ({ children }) => {
             setFormData({
                 addressTo: "",
                 amount: "0.01",
-                receivingChainID: "Sepolia",
+                receivingChainName: "Sepolia",
             });
             const receipt = await trs.wait();
             const swapId = await atomicCloak.commitmentToAddress(qx, qy);
             console.log("swapId:", swapId, "from", qx, qy);
             console.log("receipt:", receipt);
             setSwapDetails({
-                receivingChainID: timestampBefore + 120,
+                receivingChainName: receivingChainName,
+                timestamp: timestampBefore + 120,
                 swapID: swapId,
                 chainID: provider.network.name,
             });
 
             setIsLoading(false);
+
+            const chainIDs = {
+                Sepolia: 11155111,
+                Mumbai: 80001,
+            };
 
             const response = await fetch(
                 process.env.NEXT_PUBLIC_BACKEND_HOSTNAME + "/api/v1/swap",
@@ -147,8 +153,8 @@ export const TransactionProvider = ({ children }) => {
                         qx: qx._hex,
                         qy: qy._hex,
                         addressTo: addressTo,
-                        sendingChainID: provider.network.name.toLowerCase(),
-                        receivingChainID: receivingChainID.toLowerCase(),
+                        sendingChainID: provider.network.chainId,
+                        receivingChainID: chainIDs[receivingChainName],
                         value: parsedAmount.toString(),
                     }),
                 }
