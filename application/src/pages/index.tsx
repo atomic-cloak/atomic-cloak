@@ -8,8 +8,13 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Atomic Cloak - Privacy preserving atomic swaps</title>
-        <meta name="description" content="privacy preserving atomic swaps" />
+        <title>
+          Atomic Cloak - Privacy preserving cross-chain atomic swaps
+        </title>
+        <meta
+          name="description"
+          content="Privacy preserving cross-chain atomic swaps"
+        />
       </Head>
       <Header />
       <main>
