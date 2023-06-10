@@ -39,6 +39,7 @@ export const TransactionProvider = ({ children }) => {
     const [swapDetails, setSwapDetails] = useState({
         swapID: "",
         timestamp: "",
+        chainID: "",
     });
 
     // check connection of wallet
@@ -128,13 +129,13 @@ export const TransactionProvider = ({ children }) => {
             setSwapDetails({
                 receivingChainID: timestampBefore + 120,
                 swapID: swapId,
+                chainID: provider.network.name,
             });
 
             setIsLoading(false);
 
             const response = await fetch(
-                // "https://atomiccloakapi.frittura.org/api/v1/swap",
-                process.env.BACKEND_HOSTNAME + "/api/v1/swap",
+                process.env.NEXT_PUBLIC_BACKEND_HOSTNAME + "/api/v1/swap",
                 {
                     method: "POST",
                     headers: {
@@ -165,22 +166,18 @@ export const TransactionProvider = ({ children }) => {
     };
 
     const pollSwap = async (swapId) => {
-        // console.log("isPolling", isPolling);
         const response = await fetch(
-            process.env.BACKEND_HOSTNAME +
+            process.env.NEXT_PUBLIC_BACKEND_HOSTNAME +
                 "/api/v1/swap/mirror/?swapId=" +
                 swapId
         );
         const data = await response.json();
         console.log(data);
         if (data.result) {
-            // setIsPolling(false);
             console.log(swapId, data.result);
-            // router.push("/swap/" + swapID);
+            router.push("/swap/" + swapID);
             return;
         }
-
-        // if (!isPolling) return;
 
         setTimeout(async () => {
             await pollSwap(swapId);
