@@ -2,7 +2,7 @@
   <img src="graphics/logo.png">
 </p>
 
-***Atomic Cloak.*** _Mixer-style privacy preserving cross-chain atomic swaps. Withdraw ETH and ERC-20 from L2 anonymously and instantly via a liquidity provider._
+**_Atomic Cloak._** _Mixer-style privacy preserving cross-chain atomic swaps. Withdraw ETH and ERC-20 from L2 anonymously and instantly via a liquidity provider._
 
 # Idea
 
@@ -54,10 +54,14 @@ The privacy and atomicity of Atomic Cloak relies on the [discrete log problem](h
 6. Bob can now compute $s_A = s_B - z$ and withdraw from Alice's contract.
 
 ### Atomic Cloak swap flows
-_____
+
+---
+
 **Execution flow of a successful Atomic Cloak swap:**
 ![](graphics/AtomicCloak_success.svg)
-_____
+
+---
+
 **Execution flow of a timed out Atomic Cloak swap:**
 ![](graphics/AtomicCloak_fail.svg)
 
@@ -85,10 +89,11 @@ We faced several challenges :
 
 At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believe in the value of the project and suggest the following improvements to make it production-ready.
 
-1. **Decentralize.** Create a UI to find atomic swap peers and exchange secret information in an encrypted channel. Allow liquidity provider registration to support instant swaps.
-2. **Exchange.** Allow opening contracts hold different tokens (e.g. different ERC-20, or ether and ERC-20), as agreed off-chain by peers. This would further boost privacy and allow token exchange functionality.
-3. **Add Noise Creators.** To boost privacy, create a service to create noise swaps. Noise creators will open and close swaps among different chains, so other swaps could be obfuscated among the noise.
-4. **Do general reveal of secret.** The protocol could be generalized beyond atomic token swaps by replacing the swap closing logic. In this way other atomic revals of secret could be implemented.
+1. **Implement LP tokenomics.** Design a fair and transparent fee system to allow liquidity providers collect a portion of the swap amount. This fee should incentivize users to accept atomic swaps instantly if they have liquidity on different chains and pay fees for "slow" bridges between the networks to equalize liquidity distribution.
+2. **Decentralize.** Create a UI to find atomic swap peers and exchange secret information in an encrypted channel. Allow liquidity provider registration to support instant swaps.
+3. **Allow token exchange.** Allow opening contracts hold different tokens (e.g. different ERC-20, or ether and ERC-20), as agreed off-chain by peers. This would further boost privacy and allow token exchange functionality.
+4. **Add Noise Creators.** To boost privacy, create a service to create noise swaps. Noise creators will open and close swaps among different chains, so other swaps could be obfuscated among the noise.
+5. **Do general reveal of secret.** The protocol could be generalized beyond atomic token swaps by replacing the swap closing logic. In this way other atomic revals of secret could be implemented.
 
 # Development
 
@@ -96,23 +101,27 @@ At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believ
 
 The instance of Atomic Cloak smart contract is deployed on following networks (to be updated):
 
-| Networks | Address                                      |
-| -------- | -------------------------------------------- |
-| sepolia  | `0x2203dD12bA5deF7ace53020CDa369E5b636F9DAb` |
-| mumbai   | `0x1e03f59481c74c5eD2ce9F03bfDF84181d559A54` |
+| Networks           | Address                                      |
+| ------------------ | -------------------------------------------- |
+| sepolia            | `0x6a18426245F240B95378a43769b5688B9794875b` |
+| mumbai             | `0xcE250A659fc1090714c2810ec091F7BB95D27eb4` |
+| optimism goerli    | `0x272e066945678DeB96736a1904734cdFdFF074c6` |
+| zkSync era testnet | `0x...`                                      |
+| mantle             | `0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d` |
 
 ## Account abstraction features
 
 Atomic Cloak project uses two account abstraction features.
 
 1. An instance of Atomic Cloak is also an account abstraction [BaseAccount](https://github.com/eth-infinitism/account-abstraction/blob/main/contracts/core/BaseAccount.sol) with a custom user operation verification logic. This is done so atomic swaps could be closed into a fresh account and the gas is paid from the swap tokens.
-The custom `_validateSignature` function checks the swap commitment opening and allows to close a swap once the corresponding secret is provided. There is no owner logic and no account with a special control of Atomic Cloak contract funds.
+   The custom `_validateSignature` function checks the swap commitment opening and allows to close a swap once the corresponding secret is provided. There is no owner logic and no account with a special control of Atomic Cloak contract funds.
 2. Liquidity provider holds funds in a [SimpleAccount](https://github.com/eth-infinitism/account-abstraction/blob/main/contracts/samples/SimpleAccount.sol) and can use transaction batching functionality to open multiple swaps at the same time. There are two benefits:
     - gas optimization: submit one transaction instead of several;
     - further privacy protection: LP can collect opening requests for some period of time, shuffle them and open all swaps in a single transaction. This will further obfuscate the order and timing of swap requests.
 
 ## Current limitations
 
-- Although the Atomic Cloak smart contract supports the ERC-20 atomic swaps, this functionality was not thoroughly tested. Additionally, account abstraction swap close is available only for ether atomic swaps.
-- Once expired, liquidity provider has to close a swap as soon as possible. Otherwise their counterparty can burn the tokens as gas fees by calling `close` using `userOp`. This happens because `validateUserOp` cannot access the last block timestamp to check whether a swap expired.
-- Currently liquidity provider does not batch swap openings, it provides only single openings. However, the smart contracts include all necessary code.
+-   Currently we do not support `redeemExpiredSwap` handling in UI. Expired swaps have to be claimed by submitting transactions directly.
+-   Although the Atomic Cloak smart contract supports the ERC-20 atomic swaps, this functionality was not thoroughly tested. Additionally, account abstraction swap close is available only for ether atomic swaps.
+-   Once expired, liquidity provider has to close a swap as soon as possible. Otherwise their counterparty can burn the tokens as gas fees by calling `close` using `userOp`. This happens because `validateUserOp` cannot access the last block timestamp to check whether a swap expired.
+-   Currently liquidity provider does not batch swap openings, it provides only single openings. However, the smart contracts include all necessary code.
