@@ -44,8 +44,6 @@ const getAtomicCloakContract = async (chainID) => {
 
         const address = contractAddresses[chainID];
 
-        console.log("address", address, chainID);
-
         const transactionContract = new ethers.Contract(
             address,
             contractABI,
@@ -79,9 +77,12 @@ export const TransactionProvider = ({ children }) => {
         receivingChainName: "Sepolia",
     });
     const [swapDetails, setSwapDetails] = useState({
+        receivingChainName: "",
+        timestamp: 0,
         swapID: "",
-        timestamp: "",
         chainID: "",
+        secret: "",
+        sharedSecret: "",
     });
 
     // check connection of wallet
@@ -168,12 +169,18 @@ export const TransactionProvider = ({ children }) => {
             const swapId = await atomicCloak.commitmentToAddress(qx, qy);
             console.log("swapId:", swapId, "from", qx, qy);
             console.log("receipt:", receipt);
-            setSwapDetails({
+            const _sharedSecret = ethers.utils.randomBytes(32);
+            const _swapDetails = {
                 receivingChainName: receivingChainName,
                 timestamp: timestampBefore + 120,
                 swapID: swapId,
                 chainID: provider.network.chainId,
-            });
+                secret: "0x" + Buffer.from(secret).toString("hex"),
+                sharedSecret: "0x" + Buffer.from(_sharedSecret).toString("hex"),
+            };
+            setSwapDetails(_swapDetails);
+
+            console.log("receipt:", _swapDetails);
 
             setIsLoading(false);
 
@@ -186,7 +193,7 @@ export const TransactionProvider = ({ children }) => {
                         "Access-Control-Allow-Origin": "*",
                     },
                     body: JSON.stringify({
-                        z: "0x" + Buffer.from(secret).toString("hex"),
+                        z: "0x" + Buffer.from(_sharedSecret).toString("hex"),
                         qx: qx._hex,
                         qy: qy._hex,
                         addressTo: addressTo,
@@ -201,7 +208,7 @@ export const TransactionProvider = ({ children }) => {
 
             // setIsPolling(true);
             setTimeout(async () => {
-                await pollSwap(swapId);
+                await pollSwap(_swapDetails);
             }, 1000);
         } catch (error) {
             setIsLoading(false);
@@ -209,24 +216,23 @@ export const TransactionProvider = ({ children }) => {
         }
     };
 
-    const pollSwap = async (swapId) => {
+    const pollSwap = async (swapDetails) => {
         const response = await fetch(
             process.env.NEXT_PUBLIC_BACKEND_HOSTNAME +
                 "/api/v1/swap/mirror/?swapId=" +
-                swapId
+                swapDetails.swapID
         );
         const data = await response.json();
         console.log(data);
         if (data.result) {
-            console.log(swapId, data.result);
-            await sendCloseUserOp(data.result);
+            await sendCloseUserOp(data.result, swapDetails);
             return;
         }
 
         setIsCreated(true);
         console.log(response);
         setTimeout(async () => {
-            await pollSwap(swapId);
+            await pollSwap(swapDetails);
         }, 1000);
     };
 
@@ -238,28 +244,28 @@ export const TransactionProvider = ({ children }) => {
         }));
     };
 
-    const sendCloseUserOp = async (swap, secretKey) => {
+    const sendCloseUserOp = async (swap, swapDetails) => {
         console.log("sendCloseUserOp", swap);
-        console.log("params", {
-            sender: contractAddresses[swap.receivingChainID],
-            nonce: 0,
-            initCode: "0x",
-            callData:
-                "0x685da727" +
-                "000000000000000000000000" +
-                swap.mirrorSwapId.slice(2) +
-                secretKey.slice(2),
-            callGasLimit: "0x214C10",
-            verificationGasLimit: "0x06E360",
-            preVerificationGas: "0x06E360",
-            maxFeePerGas: "0x0200",
-            maxPriorityFeePerGas: "0x6f",
-            paymasterAndData: "0x",
-            signature: "0x",
-        });
         const atomicCloak = await getAtomicCloakContract(swap.receivingChainID);
-        console.log("atomicCloak:", atomicCloak);
+        const curveOrder = await atomicCloak.curveOrder();
+        console.log(
+            "curveOrder:",
+            curveOrder._hex,
+            swapDetails.secret,
+            swapDetails.sharedSecret
+        );
+        let secretKey =
+            BigInt(swapDetails.secret) + BigInt(swapDetails.sharedSecret);
+        secretKey %= BigInt(curveOrder._hex);
 
+        console.log("secretKey:", secretKey);
+
+        let s = secretKey.toString(16);
+        while (s.length < 32) {
+            s = "0" + s;
+        }
+
+        const nonce = await atomicCloak.getNonce();
         const payload = {
             jsonrpc: "2.0",
             id: 1,
@@ -267,13 +273,13 @@ export const TransactionProvider = ({ children }) => {
             params: [
                 {
                     sender: contractAddresses[swap.receivingChainID],
-                    nonce: 0,
+                    nonce: nonce.toString(),
                     initCode: "0x",
                     callData:
                         "0x685da727" +
                         "000000000000000000000000" +
                         swap.mirrorSwapId.slice(2) +
-                        secretKey.slice(2),
+                        s,
                     callGasLimit: "0x214C10",
                     verificationGasLimit: "0x06E360",
                     preVerificationGas: "0x06E360",
@@ -285,14 +291,12 @@ export const TransactionProvider = ({ children }) => {
                 "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
             ],
         };
+        "0x685da727" +
+            "000000000000000000000000" +
+            "B8f1a78fcebfEb95dB9238C732418C312a4c22aF";
 
-        console.log(payload);
-
-        const nonce = await atomicCloak.getNonce();
-        console.log("nonce:", nonce.toString());
-
-        payload.params[0].nonce = nonce.toString();
-
+        console.log("payload", payload);
+        let api_key;
         if (swap.receivingChainID === 80001) {
             api_key =
                 "fde21eaf3765d1c5fa8bc4ba7b42854beb1b3c0775b2d697286932fbcf3dde1d";

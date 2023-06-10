@@ -19,15 +19,28 @@ const closeSwap = async (swapId, swapData) => {
   `,
     { swapID: swapData.mirrorSwapId }
   )
-  const secretKey = senderSwapsResponse.data.closes[0]?._secretKey
-  console.log(secretKey)
-  if (secretKey) {
+
+  const secretKeyB = senderSwapsResponse.data.closes[0]?._secretKey
+
+  if (secretKeyB) {
     const { provider, signer, atomicCloak } = await getAtomicCloakContract(
       swapData.sendingChainID
     )
-    const tx = await atomicCloak.close(
-      swapId, secretKey
-    )
+
+    const curveOrder = await atomicCloak.curveOrder()
+
+    let secretKey
+    if (BigInt(secretKeyB) > BigInt(swapData.sharedSecret)) {
+      secretKey = BigInt(secretKeyB) - BigInt(swapData.sharedSecret)
+    } else {
+      secretKey =
+        BigInt(curveOrder._hex) +
+        BigInt(secretKeyB) -
+        BigInt(swapData.sharedSecret)
+    }
+
+    console.log(secretKey)
+    const tx = await atomicCloak.close(swapId, secretKey)
     console.log(tx)
   } else {
     setTimeout(() => closeSwap(swapId, swapData), 1000)
@@ -66,7 +79,8 @@ export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
     recipient: openSwapRequest.addressTo,
     sendingChainID: openSwapRequest.sendingChainID,
     receivingChainID: openSwapRequest.receivingChainID,
-    mirrorSwapId: mirrorSwapId
+    mirrorSwapId: mirrorSwapId,
+    sharedSecret: openSwapRequest.z
   }
 
   const gasPrice = provider.getGasPrice()
@@ -119,4 +133,3 @@ export const getMirror = async (swapId: string) => {
   }
   return null
 }
-
