@@ -1,6 +1,6 @@
 import React, { Fragment, useContext } from "react";
+import { AiOutlineDown } from "react-icons/ai";
 import { Listbox, Transition } from "@headlessui/react";
-import { AiOutlineDown, AiOutlineCheck } from "react-icons/ai";
 import { TransactionContext } from "@/providers/TransactionProvider";
 
 const style = {
@@ -12,9 +12,11 @@ const style = {
 };
 
 const chains = [
-  { name: "Sepolia", alt: "eth logo" },
-  { name: "Goerli", alt: "eth logo" },
-  { name: "Mumbai", alt: "matic logo" },
+  { name: "Sepolia" },
+  { name: "Goerli" },
+  { name: "Optimism Goerli" },
+  { name: "Mumbai" },
+  { name: "Gnosis Chiado" },
 ];
 
 const Chains: React.FC = () => {
@@ -60,11 +62,6 @@ const Chains: React.FC = () => {
                     >
                       {chain.name}
                     </span>
-                    {selected ? (
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                        <AiOutlineCheck className="h-5 w-5" />
-                      </span>
-                    ) : null}
                   </>
                 )}
               </Listbox.Option>
