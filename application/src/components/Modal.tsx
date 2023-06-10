@@ -1,10 +1,16 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState, useContext } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
 import { Dialog, Transition } from "@headlessui/react";
+import { TransactionContext } from "@/providers/TransactionProvider";
 
 const Modal: React.FC = () => {
   const cancelButtonRef = useRef(null);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  const { swapDetails, isCreated } = useContext(TransactionContext);
+
+  useEffect(() => {
+    if (isCreated) setOpen(true);
+  }, [isCreated]);
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -53,12 +59,36 @@ const Modal: React.FC = () => {
                       Atomic Swap Created
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing
-                        elit. Eius aliquam laudantium explicabo pariatur iste
-                        dolorem animi vitae error totam. At sapiente aliquam
-                        accusamus facere veritatis.
-                      </p>
+                      {swapDetails.receivingChainName ? (
+                        <div className="flex justify-between">
+                          <dt className="flex">
+                            Chain
+                            <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
+                              {swapDetails.receivingChainName}
+                            </span>
+                          </dt>
+                        </div>
+                      ) : null}
+                      {swapDetails.timestamp ? (
+                        <div className="flex justify-between">
+                          <dt className="flex">
+                            Timestamp
+                            <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
+                              {swapDetails.timestamp}
+                            </span>
+                          </dt>
+                        </div>
+                      ) : null}
+                      {swapDetails.swapID ? (
+                        <div className="flex justify-between">
+                          <dt className="flex">
+                            Swap ID
+                            <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
+                              {swapDetails.swapID}
+                            </span>
+                          </dt>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 </div>
