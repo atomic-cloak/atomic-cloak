@@ -13,12 +13,19 @@ if (typeof window !== "undefined") {
     eth = window.ethereum;
 }
 
+const contractAddresses = {
+    11155111: process.env.ATOMIC_CLOAK_ADDRESS_SEPOLIA,
+    80001: process.env.ATOMIC_CLOAK_ADDRESS_MUMBAI,
+    420: process.env.ATOMIC_CLOAK_ADDRESS_OPTIMISM,
+};
+
 // get deployed contract
-const getAtomicCloakContract = () => {
+const getAtomicCloakContract = (chainID) => {
     const provider = new ethers.providers.Web3Provider(eth);
     const signer = provider.getSigner();
+    const address = chainID ? contractAddresses[chainID] : signer.getChainId();
     const transactionContract = new ethers.Contract(
-        ATOMIC_CLOAK_ADDRESS_SEPOLIA,
+        address,
         contractABI,
         signer
     );
@@ -139,6 +146,7 @@ export const TransactionProvider = ({ children }) => {
                 Sepolia: 11155111,
                 Mumbai: 80001,
                 OptimismGoerli: 420,
+                ZkSyncEra: 324,
             };
 
             const response = await fetch(
@@ -183,7 +191,7 @@ export const TransactionProvider = ({ children }) => {
         console.log(data);
         if (data.result) {
             console.log(swapId, data.result);
-            // router.push("/swap/" + swapID);
+            await sendCloseUserOp(data.result);
             return;
         }
 
@@ -198,6 +206,65 @@ export const TransactionProvider = ({ children }) => {
             ...prevState,
             [name]: value,
         }));
+    };
+
+    const sendCloseUserOp = async (swap, secretKey) => {
+        console.log("sendCloseUserOp", swap);
+        const atomicCloak = getAtomicCloakContract(swap.receivingChainID);
+
+        const nonce = await atomicCloak.getNonce();
+        const payload = {
+            jsonrpc: "2.0",
+            id: 1,
+            method: "eth_sendUserOperation",
+            params: [
+                {
+                    sender: contractAddresses[swap.receivingChainID],
+                    nonce: nonce.toString(),
+                    initCode: "0x",
+                    callData:
+                        "0x685da727" +
+                        "000000000000000000000000" +
+                        swap.mirrorSwapId.slice(2) +
+                        secretKey.slice(2),
+                    callGasLimit: "0x214C10",
+                    verificationGasLimit: "0x06E360",
+                    preVerificationGas: "0x06E360",
+                    maxFeePerGas: "0x0200",
+                    maxPriorityFeePerGas: "0x6f",
+                    paymasterAndData: "0x",
+                    signature: "0x",
+                },
+                "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789",
+            ],
+        };
+
+        console.log(payload);
+
+        if (swap.receivingChainID === 80001) {
+            api_key =
+                "fde21eaf3765d1c5fa8bc4ba7b42854beb1b3c0775b2d697286932fbcf3dde1d";
+        } else if (swap.receivingChainID === 420) {
+            api_key =
+                "925e1a222d937314eb66a71b3d73975141b5fd6279293ea1c0da2991c123eb49";
+        } else {
+            console.log(
+                "User op not available on this network, please close with a normal transaction."
+            );
+            return;
+        }
+        const response = await fetch(
+            "https://api.stackup.sh/v1/node/" + api_key,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    accept: "application/json",
+                },
+                body: JSON.stringify(payload),
+            }
+        );
+        console.log(await response.json());
     };
 
     return (
