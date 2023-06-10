@@ -112,6 +112,7 @@ export const TransactionProvider = ({ children }) => {
           value: parsedAmount,
         }
       );
+
       // setting app state
       setIsLoading(true);
       setFormData({
@@ -146,11 +147,10 @@ export const TransactionProvider = ({ children }) => {
       );
 
       const data = await response.text();
-
       console.log(data);
-
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
     }
   };
@@ -162,15 +162,6 @@ export const TransactionProvider = ({ children }) => {
       [name]: value,
     }));
   };
-
-  // Triger Loading Model
-  useEffect(() => {
-    if (isLoading) {
-      router.push(`/?loading=${currentAccount}`);
-    } else {
-      router.push("/");
-    }
-  }, [isLoading]);
 
   return (
     <TransactionContext.Provider

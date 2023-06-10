@@ -1,9 +1,14 @@
+import React, { useContext } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Header from "@/components/Header";
+import Loader from "@/components/Loader";
 import { Main } from "@/components/Main";
+import { TransactionContext } from "@/providers/TransactionProvider";
 
 const Home: NextPage = () => {
+  const { isLoading } = useContext(TransactionContext);
+
   return (
     <div className="h-screen max-h-screen h-min-screen w-screen bg-[#000000] text-white select-none flex flex-col justify-between">
       <Head>
@@ -13,6 +18,7 @@ const Home: NextPage = () => {
       </Head>
       <Header />
       <Main />
+      {isLoading ? <Loader /> : null}
     </div>
   );
 };
