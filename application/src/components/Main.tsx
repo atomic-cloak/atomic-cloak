@@ -7,7 +7,7 @@ import { TransactionContext } from "@/providers/TransactionProvider";
 const style = {
   currencySelector: `flex w-1/4`,
   content: `bg-[#191B1F] w-[30rem] rounded-2xl p-4`,
-  wrapper: `flex justify-center items-center h-screen mt-14`,
+  wrapper: `flex justify-center items-center h-screen`,
   formHeader: `px-2 flex items-center justify-between font-semibold text-xl`,
   transferPropInput: `bg-transparent placeholder:text-[#B2B9D2] outline-none w-full text-2xl`,
   transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-4 text-xl border border-[#20242A] hover:border-[#41444F] flex justify-between`,
@@ -20,10 +20,9 @@ export const Main: React.FC = () => {
 
   const handleSubmit = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (!isLoading) {
-      const { addressTo, amount, receivingChainID } = formData;
+      const { addressTo } = formData;
       e.preventDefault();
       console.log("addressTo", addressTo);
-      //   if (!addressTo || !amount) return;
       sendOpenSwapTransaction();
     }
   };
