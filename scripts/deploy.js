@@ -21,7 +21,7 @@ async function main() {
     const cloackDeployTrs = await atomicCloakFactory.deploy(
         process.env.ATOMIC_CLOAK_SALT
     );
-    console.log(await cloackDeployTrs.wait());
+    // console.log(await cloackDeployTrs.wait());
 
     console.log(
         "AtomicCloak deployed to:",
@@ -46,7 +46,7 @@ async function main() {
         owner.address,
         process.env.PROVIDER_SIMPLE_ACCOUNT_SALT
     );
-    console.log(await simpleAccountkDeployTrs.wait());
+    // console.log(await simpleAccountkDeployTrs.wait());
 
     console.log(
         "Simple account deployed to:",

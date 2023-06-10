@@ -23,6 +23,10 @@ module.exports = {
     },
     networks: {
         hardhat: {},
+        mumbai: {
+            url: process.env.ENDPOINT_URL_MUMBAI,
+            accounts: [process.env.SK_FRITTURA],
+        },
         sepolia: {
             url: process.env.ENDPOINT_URL_SEPOLIA,
             accounts: [process.env.SK_FRITTURA],

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import fetch from "node-fetch";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
-import { contractABI, contractAddress } from "@/lib/constants";
+import { contractABI, ATOMIC_CLOAK_ADDRESS_SEPOLIA } from "@/lib/constants";
 
 export const TransactionContext = React.createContext();
 
@@ -18,7 +18,7 @@ const getAtomicCloakContract = () => {
   const provider = new ethers.providers.Web3Provider(eth);
   const signer = provider.getSigner();
   const transactionContract = new ethers.Contract(
-    contractAddress,
+    ATOMIC_CLOAK_ADDRESS_SEPOLIA,
     contractABI,
     signer
   );
@@ -32,7 +32,8 @@ export const TransactionProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     addressTo: "",
-    amount: "",
+    amount: "0.01",
+    receivingChainID: "Sepolia",
   });
 
   // check connection of wallet
@@ -83,19 +84,18 @@ export const TransactionProvider = ({ children }) => {
     try {
       if (!metamask) return alert("Please install metamask ");
 
-      const { addressTo, amount } = formData;
+      const { addressTo, amount, receivingChainID } = formData;
 
       // get AtomicCloak contract
       const atomicCloak = getAtomicCloakContract();
 
-      // const parsedAmount = ethers.utils.parseEther(amount);
+      const parsedAmount = ethers.utils.parseEther(amount);
 
       const secret = ethers.utils.randomBytes(32);
       console.log("Secret: ", Buffer.from(secret).toString("hex"));
       const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
       console.log("qx:", qx._hex);
       console.log("qy:", qy._hex);
-      const recipient = "0xBDd182877dEc564d96c4A6e21920F237487d01aD";
       const provider = new ethers.providers.Web3Provider(eth);
       const blockNumBefore = await provider.getBlockNumber();
       const blockBefore = await provider.getBlock(blockNumBefore);
@@ -104,10 +104,10 @@ export const TransactionProvider = ({ children }) => {
       const trs = await atomicCloak.openETH(
         qx,
         qy,
-        recipient,
+        addressTo,
         timestampBefore + 120,
         {
-          value: ethers.utils.parseEther("0.1"),
+          value: parsedAmount,
         }
       );
       // setting app state
@@ -115,11 +115,12 @@ export const TransactionProvider = ({ children }) => {
       setFormData({
         addressTo: "",
         amount: "",
+        receivingChainID: "",
       });
       const receipt = await trs.wait();
       console.log("receipt:", receipt);
 
-      const response = await fetch("http://localhost:7777/swap", {
+      const response = await fetch("http://localhost:7777/api/v1/swap", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -129,6 +130,9 @@ export const TransactionProvider = ({ children }) => {
           z: Buffer.from(secret).toString("hex"),
           qx: qx._hex,
           qy: qy._hex,
+          addressTo: addressTo,
+          receivingChainID: receivingChainID,
+          value: parsedAmount.toString(),
         }),
       });
 
@@ -143,10 +147,10 @@ export const TransactionProvider = ({ children }) => {
   };
 
   // handle form data
-  const handleChange = (e, name) => {
+  const handleChange = (value, name) => {
     setFormData((prevState) => ({
       ...prevState,
-      [name]: e.target.value,
+      [name]: value,
     }));
   };
 

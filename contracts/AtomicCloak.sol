@@ -18,16 +18,16 @@ contract AtomicCloak is BaseAccount {
 
     uint256 constant NO_FEE = 0;
     // uint256 constant TIMED_FEE = 0.00001 ether;
-    uint256 constant SMALL_FEE = 0.001 ether;
-    uint256 constant LARGE_FEE = 0.01 ether;
+    uint256 constant SMALL_FEE = 0.00001 ether;
+    uint256 constant LARGE_FEE = 0.001 ether;
 
-    uint256 constant SMALL_VALUE = 0.1 ether;
-    uint256 constant MEDIUM_VALUE = 1 ether;
-    uint256 constant LARGE_VALUE = 10 ether;
+    uint256 constant SMALL_VALUE = 0.001 ether;
+    uint256 constant MEDIUM_VALUE = 0.01 ether;
+    uint256 constant LARGE_VALUE = 0.1 ether;
 
     IEntryPoint private immutable _entryPoint;
 
-    mapping(address => Swap) private swaps;
+    mapping(address => Swap) public swaps;
     address immutable ETH_TOKEN_CONTRACT = address(0x0);
     bytes4 immutable CLOSE_NO_VERIFY_SELECTOR = 0x685da727;
     // == bytes4(keccak256("closeNoVerify(address,uint256)"));
@@ -53,40 +53,11 @@ contract AtomicCloak is BaseAccount {
         return _entryPoint;
     }
 
-    modifier onlyInvalidSwaps(address _swapID) {
-        require(swaps[_swapID].value == 0, "Swap has been already opened.");
-        _;
-    }
-
-    modifier onlyOpenSwaps(address _swapID) {
-        require(swaps[_swapID].value > 0, "Swap has not been opened.");
-        require(swaps[_swapID].timelock < block.timestamp, "Swap has expired.");
-        _;
-    }
-
-    modifier onlyExpirableSwaps(address _swapID) {
-        require(
-            block.timestamp >= swaps[_swapID].timelock,
-            "Swap has not expired."
-        );
-        _;
-    }
-
-    modifier onlyWithSecretKey(address _swapID, uint256 _secretKey) {
-        // require(_swapID == sha256(_secretKey)); This is the usual HTLC way.
-        // Instead we use Schnorr-ish verification;
-        // Note: _swapID is actually the hashed commitment
-        require(
-            getHashedCommitment(_secretKey) == _swapID,
-            "Verification failed."
-        );
-
-        _;
-    }
-
     constructor(address __entryPoint) {
         _entryPoint = IEntryPoint(__entryPoint);
     }
+
+    receive() external payable {}
 
     function commitmentFromSecret(
         uint256 _secretKey
@@ -156,7 +127,7 @@ contract AtomicCloak is BaseAccount {
             value: msg.value,
             sender: payable(msg.sender),
             recipient: _recipient,
-            fee: NO_FEE
+            fee: SMALL_FEE
         });
 
         swaps[_swapID] = swap;
@@ -208,22 +179,25 @@ contract AtomicCloak is BaseAccount {
             value: _value,
             sender: payable(msg.sender),
             recipient: _recipient,
-            fee: NO_FEE
+            fee: SMALL_FEE
         });
         swaps[_swapID] = swap;
 
         emit Open(_swapID, msg.sender, _recipient);
     }
 
-    function close(
-        address _swapID,
-        uint256 _secretKey
-    )
-        public
-        payable
-        onlyOpenSwaps(_swapID)
-        onlyWithSecretKey(_swapID, _secretKey)
-    {
+    function close(address _swapID, uint256 _secretKey) public payable {
+        require(swaps[_swapID].value > 0, "Swap has not been opened.");
+        require(swaps[_swapID].timelock > block.timestamp, "Swap has expired.");
+
+        // require(_swapID == sha256(_secretKey)); This is the usual HTLC way.
+        // Instead we use Schnorr-ish verification;
+        // Note: _swapID is actually the hashed commitment
+        require(
+            getHashedCommitment(_secretKey) == _swapID,
+            "Verification failed."
+        );
+
         Swap memory swap = swaps[_swapID];
 
         // TODO: implement fees to incentivize closing contracts as fast as possible.
@@ -249,9 +223,13 @@ contract AtomicCloak is BaseAccount {
         delete swaps[_swapID];
     }
 
-    function redeemExpiredSwap(
-        address _swapID
-    ) public onlyOpenSwaps(_swapID) onlyExpirableSwaps(_swapID) {
+    function redeemExpiredSwap(address _swapID) public {
+        require(swaps[_swapID].value > 0, "Swap has not been opened.");
+        require(
+            swaps[_swapID].timelock <= block.timestamp,
+            "Swap has not expired."
+        );
+
         Swap memory swap = swaps[_swapID];
 
         if (swap.tokenContract == ETH_TOKEN_CONTRACT) {
@@ -282,6 +260,7 @@ contract AtomicCloak is BaseAccount {
     }
 
     /// implement template method of BaseAccount
+    //FIXME: set oublic --> internal, this is only for tests
     function _validateSignature(
         UserOperation calldata userOp,
         bytes32 userOpHash
@@ -301,7 +280,7 @@ contract AtomicCloak is BaseAccount {
             return SIG_VALIDATION_FAILED;
         }
 
-        if (swaps[_swapID].timelock >= block.timestamp) {
+        if (swaps[_swapID].timelock <= block.timestamp) {
             return SIG_VALIDATION_FAILED;
         }
 
@@ -312,5 +291,35 @@ contract AtomicCloak is BaseAccount {
             return SIG_VALIDATION_FAILED;
         }
         return 0;
+    }
+
+    function validateSignature_test(UserOperation calldata userOp) public {
+        // (bytes4 _selector, address _swapID, uint256 _secretKey) = abi.decode(
+        //     userOp.callData,
+        //     (bytes4, address, uint256)
+        // );
+        bytes4 _selector = bytes4(userOp.callData[:4]);
+        address _swapID = address(
+            uint160(uint256(bytes32(userOp.callData[4:36])))
+        );
+        uint256 _secretKey = uint256(bytes32(userOp.callData[36:68]));
+
+        require(_selector == CLOSE_NO_VERIFY_SELECTOR, "Invalid selector.");
+
+        Swap memory swap = swaps[_swapID];
+
+        require(swaps[_swapID].value > 0, "Swap has not been opened.");
+
+        require(swaps[_swapID].timelock > block.timestamp, "Swap has expired.");
+
+        require(
+            swap.tokenContract == ETH_TOKEN_CONTRACT,
+            "Token contract is not ETH."
+        );
+
+        require(
+            getHashedCommitment(_secretKey) == _swapID,
+            "Verification failed."
+        );
     }
 }
