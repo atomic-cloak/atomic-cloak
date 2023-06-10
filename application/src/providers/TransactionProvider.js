@@ -19,6 +19,13 @@ const contractAddresses = {
     420: process.env.ATOMIC_CLOAK_ADDRESS_OPTIMISM,
 };
 
+const chainIDs = {
+    Sepolia: 11155111,
+    Mumbai: 80001,
+    OptimismGoerli: 420,
+    ZkSyncEra: 324,
+};
+
 // get deployed contract
 const getAtomicCloakContract = (chainID) => {
     const provider = new ethers.providers.Web3Provider(eth);
@@ -37,10 +44,10 @@ export const TransactionProvider = ({ children }) => {
     // global app states
     const [currentAccount, setCurrentAccount] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [isPolling, setIsPolling] = useState(false);
+    const [isCreated, setIsCreated] = useState(false);
     const [formData, setFormData] = useState({
         addressTo: "",
-        amount: "0.01",
+        amount: "0.001",
         receivingChainName: "Sepolia",
     });
     const [swapDetails, setSwapDetails] = useState({
@@ -124,11 +131,11 @@ export const TransactionProvider = ({ children }) => {
 
             // setting app state
             setIsLoading(true);
-            setFormData({
-                addressTo: "",
-                amount: "0.01",
-                receivingChainName: "Sepolia",
-            });
+            // setFormData({
+            //     addressTo: "",
+            //     amount: "0.01",
+            //     receivingChainName: "Sepolia",
+            // });
             const receipt = await trs.wait();
             const swapId = await atomicCloak.commitmentToAddress(qx, qy);
             console.log("swapId:", swapId, "from", qx, qy);
@@ -137,17 +144,10 @@ export const TransactionProvider = ({ children }) => {
                 receivingChainName: receivingChainName,
                 timestamp: timestampBefore + 120,
                 swapID: swapId,
-                chainID: provider.network.name,
+                chainID: provider.network.chainId,
             });
 
             setIsLoading(false);
-
-            const chainIDs = {
-                Sepolia: 11155111,
-                Mumbai: 80001,
-                OptimismGoerli: 420,
-                ZkSyncEra: 324,
-            };
 
             const response = await fetch(
                 process.env.NEXT_PUBLIC_BACKEND_HOSTNAME + "/api/v1/swap",
@@ -195,6 +195,8 @@ export const TransactionProvider = ({ children }) => {
             return;
         }
 
+        setIsCreated(true);
+        console.log(response);
         setTimeout(async () => {
             await pollSwap(swapId);
         }, 1000);
