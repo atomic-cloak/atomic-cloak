@@ -10,11 +10,13 @@ export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
   const { provider, signer, atomicCloak } = await getAtomicCloakContract(
     openSwapRequest.receivingChainID
   )
+  console.log('Getting commitment')
   const [qsx, qsy] = await atomicCloak.commitmentFromSharedSecret(
     openSwapRequest.qx,
     openSwapRequest.qy,
     openSwapRequest.z
   )
+  console.log('qsx:', qsx, 'qsy:', qsy)
 
   const gasPrice = provider.getGasPrice()
   const blockNumberBefore = await provider.getBlockNumber()
@@ -44,6 +46,9 @@ export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
 
 export const getMirror = async (swapId: string) => {
   const checkGraph = async (swapID) => {
+    if (!swapDB[swapID]) {
+      return null
+    }
     const response = await sendGraphqlRequest(graphqlEndpoints[swapDB[swapID].chainId], `
       query Query ($swapID: String!) {
         opens(where: { _swapID: $swapID }) {
