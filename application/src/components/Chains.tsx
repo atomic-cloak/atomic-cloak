@@ -13,7 +13,7 @@ const style = {
 
 const chains = [
   { name: "Sepolia", logo: "/images/eth.png", alt: "eth logo" },
-  { name: "Optimism Goerli", logo: "/images/op.png", alt: "op logo" },
+  { name: "Mumbai", logo: "/images/matic.png", alt: "matic logo" },
 ];
 
 const Chains: React.FC = () => {

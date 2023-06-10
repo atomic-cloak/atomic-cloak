@@ -11,7 +11,7 @@ const style = {
   chevronArrow: `h-5 w-5 text-gray-400`,
 };
 
-const quantities = [{ amount: "0.1" }, { amount: "1" }, { amount: "10" }];
+const quantities = [{ amount: "0.001" }, { amount: "0.01" }, { amount: "0.1" }];
 
 const Quantity: React.FC = () => {
   const [selected, setSelected] = useState(quantities[0]);
