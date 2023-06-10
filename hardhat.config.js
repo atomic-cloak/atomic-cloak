@@ -35,6 +35,10 @@ module.exports = {
             url: process.env.ENDPOINT_URL_OPTIMISM_GOERLI,
             accounts: [process.env.SK_FRITTURA],
         },
+        mantle: {
+            url: process.env.ENDPOINT_URL_MANTLE,
+            accounts: [process.env.SK_FRITTURA],
+        },
         frittura: {
             url: process.env.ENDPOINT_URL_FRITTURA,
             accounts: [process.env.SK_FRITTURA],

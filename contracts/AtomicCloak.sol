@@ -21,10 +21,6 @@ contract AtomicCloak is BaseAccount {
     uint256 constant SMALL_FEE = 0.00001 ether;
     uint256 constant LARGE_FEE = 0.001 ether;
 
-    uint256 constant SMALL_VALUE = 0.001 ether;
-    uint256 constant MEDIUM_VALUE = 0.01 ether;
-    uint256 constant LARGE_VALUE = 0.1 ether;
-
     IEntryPoint private immutable _entryPoint;
 
     mapping(address => Swap) public swaps;
@@ -114,12 +110,7 @@ contract AtomicCloak is BaseAccount {
             _timelock > block.timestamp,
             "Timelock value must be in the future."
         );
-        require(
-            msg.value == SMALL_VALUE ||
-                msg.value == MEDIUM_VALUE ||
-                msg.value == LARGE_VALUE,
-            "Invalid message value."
-        );
+        require(msg.value > SMALL_FEE, "Invalid message value.");
 
         Swap memory swap = Swap({
             timelock: _timelock,
@@ -246,14 +237,18 @@ contract AtomicCloak is BaseAccount {
     }
 
     function closeNoVerify(address _swapID, uint256 _secretKey) public {
+        // Note: the following line implies that if the provider does not close the swap,
+        // then the recipient can burn gas (nice punisment ;) ).
+        require(swaps[_swapID].timelock > block.timestamp, "Swap has expired.");
+
         _requireFromEntryPoint();
         Swap memory swap = swaps[_swapID];
         // Note: we already verified that swap.tokenAddress == ETH_TOKEN_ADDRESS.
         // TODO: implement fees to incentivize closing contracts as fast as possible.
         // Transfer the ETH funds from this contract to the recipient.
-        swap.recipient.transfer(swap.value);
+        swap.recipient.transfer(swap.value - swap.fee);
 
-        // TODO: send part of the swap value back to closer wallet, since closer wallet paid for the gas.
+        // end part of the swap value back to closer wallet, since closer wallet paid for the gas.
 
         emit Close(_swapID, _secretKey);
         delete swaps[_swapID];
@@ -281,10 +276,6 @@ contract AtomicCloak is BaseAccount {
             return SIG_VALIDATION_FAILED;
         }
 
-        if (swaps[_swapID].timelock <= block.timestamp) {
-            return SIG_VALIDATION_FAILED;
-        }
-
         if (swap.tokenContract != ETH_TOKEN_CONTRACT) {
             return SIG_VALIDATION_FAILED;
         }
@@ -294,7 +285,7 @@ contract AtomicCloak is BaseAccount {
         return 0;
     }
 
-    function validateSignature_test(UserOperation calldata userOp) public {
+    function validateSignature_test(UserOperation calldata userOp) public view {
         bytes4 _selector = bytes4(userOp.callData[:4]);
         address _swapID = address(
             uint160(uint256(bytes32(userOp.callData[4:36])))
@@ -307,7 +298,7 @@ contract AtomicCloak is BaseAccount {
 
         require(swaps[_swapID].value > 0, "Swap has not been opened.");
 
-        require(swaps[_swapID].timelock > block.timestamp, "Swap has expired.");
+        // require(swaps[_swapID].timelock > block.timestamp, "Swap has expired.");
 
         require(
             swap.tokenContract == ETH_TOKEN_CONTRACT,
