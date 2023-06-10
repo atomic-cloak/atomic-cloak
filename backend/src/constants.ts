@@ -2,7 +2,7 @@ import abi from './data/abi/AtomicCloak.json'
 
 export const graphqlEndpoints = {
   Sepolia: 'https://api.studio.thegraph.com/proxy/48185/atomiccloak/v0.0.6',
-  Mumbai: ''
+  Mumbai: 'https://api.studio.thegraph.com/proxy/48185/atomiccloak/v0.0.6'
 }
 
 export const atomicCloakABI = abi.abi
