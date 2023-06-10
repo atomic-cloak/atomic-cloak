@@ -69,6 +69,7 @@ const Modal: React.FC = () => {
                           </dt>
                         </div>
                       ) : null}
+                      <br />
                       {swapDetails.timestamp ? (
                         <div className="flex justify-between">
                           <dt className="flex">
@@ -79,6 +80,7 @@ const Modal: React.FC = () => {
                           </dt>
                         </div>
                       ) : null}
+                      <br />
                       {swapDetails.swapID ? (
                         <div className="flex justify-between">
                           <dt className="flex">
