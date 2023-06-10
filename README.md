@@ -85,10 +85,11 @@ We faced several challenges :
 
 At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believe in the value of the project and suggest the following improvements to make it production-ready.
 
-1. **Decentralize.** Create a UI to find atomic swap peers and exchange secret information in an encrypted channel. Allow liquidity provider registration to support instant swaps.
-2. **Exchange.** Allow opening contracts hold different tokens (e.g. different ERC-20, or ether and ERC-20), as agreed off-chain by peers. This would further boost privacy and allow token exchange functionality.
-3. **Add Noise Creators.** To boost privacy, create a service to create noise swaps. Noise creators will open and close swaps among different chains, so other swaps could be obfuscated among the noise.
-4. **Do general reveal of secret.** The protocol could be generalized beyond atomic token swaps by replacing the swap closing logic. In this way other atomic revals of secret could be implemented.
+1. **Implement LP tokenomics.** Design a fair and transparent fee system to allow liquidity providers collect a portion of the swap amount. This fee should incentivize users to accept atomic swaps instantly if they have liquidity on different chains and pay fees for "slow" bridges between the networks to equalize liquidity distribution.
+2. **Decentralize.** Create a UI to find atomic swap peers and exchange secret information in an encrypted channel. Allow liquidity provider registration to support instant swaps.
+3. **Allow token exchange.** Allow opening contracts hold different tokens (e.g. different ERC-20, or ether and ERC-20), as agreed off-chain by peers. This would further boost privacy and allow token exchange functionality.
+4. **Add Noise Creators.** To boost privacy, create a service to create noise swaps. Noise creators will open and close swaps among different chains, so other swaps could be obfuscated among the noise.
+5. **Do general reveal of secret.** The protocol could be generalized beyond atomic token swaps by replacing the swap closing logic. In this way other atomic revals of secret could be implemented.
 
 # Development
 
@@ -96,10 +97,13 @@ At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believ
 
 The instance of Atomic Cloak smart contract is deployed on following networks (to be updated):
 
-| Networks | Address                                      |
-| -------- | -------------------------------------------- |
-| sepolia  | `0x2203dD12bA5deF7ace53020CDa369E5b636F9DAb` |
-| mumbai   | `0x1e03f59481c74c5eD2ce9F03bfDF84181d559A54` |
+| Networks          | Address                                      |
+| --------          | -------------------------------------------- |
+| sepolia           | `0x2203dD12bA5deF7ace53020CDa369E5b636F9DAb` |
+| mumbai            | `0x1e03f59481c74c5eD2ce9F03bfDF84181d559A54` |
+| optimism goerli   |  `0x...`                                     |
+|zkSync era testnet |  `0x...`                                     |
+|  mantle           |  `0x...`                                     |
 
 ## Account abstraction features
 
@@ -113,6 +117,7 @@ The custom `_validateSignature` function checks the swap commitment opening and 
 
 ## Current limitations
 
+- Currently we do not support `redeemExpiredSwap` handling in UI. Expired swaps have to be claimed by submitting transactions directly.
 - Although the Atomic Cloak smart contract supports the ERC-20 atomic swaps, this functionality was not thoroughly tested. Additionally, account abstraction swap close is available only for ether atomic swaps.
 - Once expired, liquidity provider has to close a swap as soon as possible. Otherwise their counterparty can burn the tokens as gas fees by calling `close` using `userOp`. This happens because `validateUserOp` cannot access the last block timestamp to check whether a swap expired.
 - Currently liquidity provider does not batch swap openings, it provides only single openings. However, the smart contracts include all necessary code.
