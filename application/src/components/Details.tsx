@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import { TransactionContext } from "@/providers/TransactionProvider";
 
 const style = {
+  transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-4 text-xl border border-[#20242A]`,
   transferPropInput: `bg-transparent placeholder:text-[#B2B9D2] outline-none w-full text-2xl`,
-  transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-4 text-xl border border-[#20242A] hover:border-[#41444F]`,
 };
 
 const Details: React.FC = () => {
