@@ -5,7 +5,6 @@ import Quantity from "@/components/Quantity";
 import { TransactionContext } from "@/providers/TransactionProvider";
 
 const style = {
-  currencySelector: `flex w-1/4`,
   content: `bg-[#191B1F] w-[30rem] rounded-2xl p-4`,
   wrapper: `flex justify-center items-center h-screen`,
   formHeader: `px-2 flex items-center justify-between font-semibold text-xl`,
