@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import fetch from "node-fetch";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
-import { contractABI, ATOMIC_CLOAK_ADDRESS_SEPOLIA } from "@/lib/constants";
+import { contractABI } from "@/lib/constants";
 
 export const TransactionContext = React.createContext();
 
@@ -14,9 +14,10 @@ if (typeof window !== "undefined") {
 }
 
 const contractAddresses = {
-    11155111: process.env.ATOMIC_CLOAK_ADDRESS_SEPOLIA,
-    80001: process.env.ATOMIC_CLOAK_ADDRESS_MUMBAI,
-    420: process.env.ATOMIC_CLOAK_ADDRESS_OPTIMISM,
+    11155111: "0x6a18426245F240B95378a43769b5688B9794875b",
+    80001: "0xcE250A659fc1090714c2810ec091F7BB95D27eb4",
+    420: "0x272e066945678DeB96736a1904734cdFdFF074c6",
+    5001: "0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d",
 };
 
 const chainIDs = {
@@ -24,13 +25,40 @@ const chainIDs = {
     Mumbai: 80001,
     OptimismGoerli: 420,
     ZkSyncEra: 324,
+    Mantle: 5001,
+};
+
+const rpcProviders = {
+    11155111: "https://rpc2.sepolia.org/",
+    80001: "https://rpc-mumbai.maticvigil.com/",
+    420: "https://goerli.optimism.io/",
+    5001: "https://rpc.testnet.mantle.xyz",
 };
 
 // get deployed contract
-const getAtomicCloakContract = (chainID) => {
+const getAtomicCloakContract = async (chainID) => {
+    if (chainID) {
+        const provider = new ethers.providers.JsonRpcProvider(
+            rpcProviders[chainID]
+        );
+
+        const address = contractAddresses[chainID];
+
+        console.log("address", address, chainID);
+
+        const transactionContract = new ethers.Contract(
+            address,
+            contractABI,
+            provider
+        );
+        return transactionContract;
+    }
     const provider = new ethers.providers.Web3Provider(eth);
     const signer = provider.getSigner();
-    const address = chainID ? contractAddresses[chainID] : signer.getChainId();
+    const _chainID = await signer.getChainId();
+    const address = contractAddresses[_chainID];
+    console.log("address", address, _chainID, chainID);
+
     const transactionContract = new ethers.Contract(
         address,
         contractABI,
@@ -106,7 +134,7 @@ export const TransactionProvider = ({ children }) => {
             const { addressTo, amount, receivingChainName } = formData;
 
             // get AtomicCloak contract
-            const atomicCloak = getAtomicCloakContract();
+            const atomicCloak = await getAtomicCloakContract();
             const parsedAmount = ethers.utils.parseEther(amount);
 
             const secret = ethers.utils.randomBytes(32);
@@ -169,7 +197,7 @@ export const TransactionProvider = ({ children }) => {
                 }
             );
 
-            console.log(response);
+            // console.log(response.data);
 
             // setIsPolling(true);
             setTimeout(async () => {
@@ -212,9 +240,26 @@ export const TransactionProvider = ({ children }) => {
 
     const sendCloseUserOp = async (swap, secretKey) => {
         console.log("sendCloseUserOp", swap);
-        const atomicCloak = getAtomicCloakContract(swap.receivingChainID);
+        console.log("params", {
+            sender: contractAddresses[swap.receivingChainID],
+            nonce: 0,
+            initCode: "0x",
+            callData:
+                "0x685da727" +
+                "000000000000000000000000" +
+                swap.mirrorSwapId.slice(2) +
+                secretKey.slice(2),
+            callGasLimit: "0x214C10",
+            verificationGasLimit: "0x06E360",
+            preVerificationGas: "0x06E360",
+            maxFeePerGas: "0x0200",
+            maxPriorityFeePerGas: "0x6f",
+            paymasterAndData: "0x",
+            signature: "0x",
+        });
+        const atomicCloak = await getAtomicCloakContract(swap.receivingChainID);
+        console.log("atomicCloak:", atomicCloak);
 
-        const nonce = await atomicCloak.getNonce();
         const payload = {
             jsonrpc: "2.0",
             id: 1,
@@ -222,7 +267,7 @@ export const TransactionProvider = ({ children }) => {
             params: [
                 {
                     sender: contractAddresses[swap.receivingChainID],
-                    nonce: nonce.toString(),
+                    nonce: 0,
                     initCode: "0x",
                     callData:
                         "0x685da727" +
@@ -242,6 +287,11 @@ export const TransactionProvider = ({ children }) => {
         };
 
         console.log(payload);
+
+        const nonce = await atomicCloak.getNonce();
+        console.log("nonce:", nonce.toString());
+
+        payload.params[0].nonce = nonce.toString();
 
         if (swap.receivingChainID === 80001) {
             api_key =
