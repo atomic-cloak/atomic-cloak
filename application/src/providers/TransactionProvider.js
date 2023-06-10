@@ -34,11 +34,12 @@ export const TransactionProvider = ({ children }) => {
     const [formData, setFormData] = useState({
         addressTo: "",
         amount: "0.01",
-        receivingChainID: "Sepolia",
+        receivingChainName: "Sepolia",
     });
     const [swapDetails, setSwapDetails] = useState({
         swapID: "",
         timestamp: "",
+        chainID: "",
     });
 
     // check connection of wallet
@@ -88,7 +89,7 @@ export const TransactionProvider = ({ children }) => {
         console.log("sendOpenSwapTransaction");
         try {
             if (!metamask) return alert("Please install metamask ");
-            const { addressTo, amount, receivingChainID } = formData;
+            const { addressTo, amount, receivingChainName } = formData;
 
             // get AtomicCloak contract
             const atomicCloak = getAtomicCloakContract();
@@ -119,21 +120,28 @@ export const TransactionProvider = ({ children }) => {
             setFormData({
                 addressTo: "",
                 amount: "0.01",
-                receivingChainID: "Sepolia",
+                receivingChainName: "Sepolia",
             });
             const receipt = await trs.wait();
             const swapId = await atomicCloak.commitmentToAddress(qx, qy);
+            console.log("swapId:", swapId, "from", qx, qy);
             console.log("receipt:", receipt);
             setSwapDetails({
-                receivingChainID: timestampBefore + 120,
+                receivingChainName: receivingChainName,
+                timestamp: timestampBefore + 120,
                 swapID: swapId,
+                chainID: provider.network.name,
             });
 
             setIsLoading(false);
 
-            const response = fetch(
-                // "https://atomiccloakapi.frittura.org/api/v1/swap",
-                "http://localhost:7777/api/v1/swap",
+            const chainIDs = {
+                Sepolia: 11155111,
+                Mumbai: 80001,
+            };
+
+            const response = await fetch(
+                process.env.NEXT_PUBLIC_BACKEND_HOSTNAME + "/api/v1/swap",
                 {
                     method: "POST",
                     headers: {
@@ -145,7 +153,8 @@ export const TransactionProvider = ({ children }) => {
                         qx: qx._hex,
                         qy: qy._hex,
                         addressTo: addressTo,
-                        receivingChainID: receivingChainID,
+                        sendingChainID: provider.network.chainId,
+                        receivingChainID: chainIDs[receivingChainName],
                         value: parsedAmount.toString(),
                     }),
                 }
@@ -153,7 +162,7 @@ export const TransactionProvider = ({ children }) => {
 
             console.log(response);
 
-            setIsPolling(true);
+            // setIsPolling(true);
             setTimeout(async () => {
                 await pollSwap(swapId);
             }, 1000);
@@ -165,17 +174,17 @@ export const TransactionProvider = ({ children }) => {
 
     const pollSwap = async (swapId) => {
         const response = await fetch(
-            "http://localhost:7777/api/v1/swap/mirror/?swapId=" + swapId
+            process.env.NEXT_PUBLIC_BACKEND_HOSTNAME +
+                "/api/v1/swap/mirror/?swapId=" +
+                swapId
         );
         const data = await response.json();
         console.log(data);
-        if (data.result != null) {
-            setIsPolling(false);
+        if (data.result) {
             console.log(swapId, data.result);
             // router.push("/swap/" + swapID);
+            return;
         }
-
-        if (!isPolling) return;
 
         setTimeout(async () => {
             await pollSwap(swapId);

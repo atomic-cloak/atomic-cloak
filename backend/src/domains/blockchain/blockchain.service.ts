@@ -3,8 +3,8 @@ import { atomicCloakABI, rpcProviders } from '../../constants'
 
 export const getAtomicCloakContract = async (chainId) => {
   const contractAddresses = {
-    Sepolia: process.env.ATOMIC_CLOAK_ADDRESS_SEPOLIA,
-    Mumbai: process.env.ATOMIC_CLOAK_ADDRESS_MUMBAI
+    11155111: process.env.ATOMIC_CLOAK_ADDRESS_SEPOLIA,
+    80001: process.env.ATOMIC_CLOAK_ADDRESS_MUMBAI
   }
 
   const provider = new ethers.providers.JsonRpcProvider(rpcProviders[chainId])

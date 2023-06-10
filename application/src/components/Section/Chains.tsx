@@ -24,13 +24,13 @@ const Chains: React.FC = () => {
 
   return (
     <Listbox
-      value={formData.receivingChainID}
-      onChange={(e) => handleChange(e.name, "receivingChainID")}
+      value={formData.receivingChainName}
+      onChange={(e) => handleChange(e.name, "receivingChainName")}
     >
       <div className={style.wrapper}>
         <Listbox.Button className={style.container}>
           <span className={style.chainSelector}>
-            {formData.receivingChainID}
+            {formData.receivingChainName}
           </span>
           <span className={style.chevronContainer}>
             <AiOutlineDown className={style.chevronArrow} />
