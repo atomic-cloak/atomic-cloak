@@ -33,7 +33,11 @@ export const TransactionProvider = ({ children }) => {
   const [formData, setFormData] = useState({
     addressTo: "",
     amount: "0.01",
-    receivingChainID: "Sepolia",
+    receivingChainID: "Goerli",
+  });
+  const [swapDetails, setSwapDetails] = useState({
+    swapID: "",
+    timestamp: "Goerli",
   });
 
   // check connection of wallet
@@ -119,6 +123,10 @@ export const TransactionProvider = ({ children }) => {
       });
       const receipt = await trs.wait();
       console.log("receipt:", receipt);
+      setSwapDetails({
+        receivingChainID: timestampBefore + 120,
+        swapID: await commitmentToAddress(qx, qy),
+      });
 
       const response = await fetch("http://localhost:7777/api/v1/swap", {
         method: "POST",
@@ -171,6 +179,7 @@ export const TransactionProvider = ({ children }) => {
         sendOpenSwapTransaction,
         handleChange,
         formData,
+        swapDetails,
         isLoading,
       }}
     >
