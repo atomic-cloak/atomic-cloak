@@ -101,13 +101,13 @@ At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believ
 
 The instance of Atomic Cloak smart contract is deployed on following networks (to be updated):
 
-| Networks           | Address                                      |
-| ------------------ | -------------------------------------------- |
-| sepolia            | `0x6a18426245F240B95378a43769b5688B9794875b` |
-| mumbai             | `0xcE250A659fc1090714c2810ec091F7BB95D27eb4` |
-| optimism goerli    | `0x272e066945678DeB96736a1904734cdFdFF074c6` |
-| zkSync era testnet | `0x...`                                      |
-| mantle             | `0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d` |
+| Networks           | Address                                      |   UI support    |  Close swap with UserOp    |
+| ------------------ | -------------------------------------------- |-----------------|----------------------------|
+| sepolia            | `0x6a18426245F240B95378a43769b5688B9794875b` |     Yes         |         No                 |
+| mumbai             | `0xcE250A659fc1090714c2810ec091F7BB95D27eb4` |     Yes         |         Yes                |
+| optimism goerli    | `0x272e066945678DeB96736a1904734cdFdFF074c6` |     Yes         |         Yes                |
+| zkSync era testnet | `0x...`                                      |                 |                            |
+| mantle             | `0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d` |     No          |         No                 |
 
 ## Account abstraction features
 
