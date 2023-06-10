@@ -138,6 +138,7 @@ export const TransactionProvider = ({ children }) => {
             const chainIDs = {
                 Sepolia: 11155111,
                 Mumbai: 80001,
+                OptimismGoerli: 420,
             };
 
             const response = await fetch(
