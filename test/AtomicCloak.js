@@ -109,7 +109,6 @@ describe("AtomicCloak", function () {
             secret = ethers.utils.randomBytes(32);
             const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
             const recipient = ethers.Wallet.createRandom().address;
-
             await expect(
                 atomicCloak.openERC20(
                     qx,

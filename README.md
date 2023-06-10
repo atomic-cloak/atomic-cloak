@@ -2,7 +2,7 @@
   <img src="graphic/logo_cropped.png">
 </p>
 
-# Specificaitons
+# Specifications
 
 ## Atomic Cloak
 
@@ -54,9 +54,10 @@ The privacy and atomicity of Atomic Cloak relies on the [discrete log problem](h
 6. Bob can now compute $s_A = s_B - z$ and withdraw from Alice's contract.
 
 ### Atomic Cloak swap flows
-__Execution flow of a successful Atomic Cloak swap:__
+
+**Execution flow of a successful Atomic Cloak swap:**
 ![](graphic/AtomicCloak_success.svg)
-__Execution flow of a timed out Atomic Cloak swap:__
+**Execution flow of a timed out Atomic Cloak swap:**
 ![](graphic/AtomicCloak_fail.svg)
 
 ## Challenges
@@ -69,15 +70,15 @@ We faced several challenges :
 4. Gas-efficiently opening many STLCs for liquidity providers.
 5. Deploying AtomicCloak contract to different chains with the same address.
 
-__Solution to 1__: Abuse `ecrecover` opcode to multiply an EC point with a scalar as explained [here](https://ethresear.ch/t/you-can-kinda-abuse-ecrecover-to-do-ecmul-in-secp256k1-today/2384/4).
+**Solution to 1**: Abuse `ecrecover` opcode to multiply an EC point with a scalar as explained [here](https://ethresear.ch/t/you-can-kinda-abuse-ecrecover-to-do-ecmul-in-secp256k1-today/2384/4).
 
-__Solution to 2__: use The Graph to listen to emitted events.
+**Solution to 2**: use The Graph to listen to emitted events.
 
 **Solution to 3**: account abstraction. Using [EIP-4337][https://eips.ethereum.org/EIPS/eip-4337] protocol, the SLT contract itself can pay swap closure fee for a small fraction of the swap amount. To close a swap, a user creates a UserOperation with the reveal data, and can withdraw tokens to a fresh empty account. Note that a user can also close with a transaction (e.g. to use on chains with no AA features), but this will provide risks for privacy.
 
-__Solution to 4__: account abstraction. We use transaction batching feature of EIP-4337 to open many atomic swaps with a single transaction.
+**Solution to 4**: account abstraction. We use transaction batching feature of EIP-4337 to open many atomic swaps with a single transaction.
 
-__Solution to 5__: deploy everything via factories that use `CREATE2` opcode.
+**Solution to 5**: deploy everything via factories that use `CREATE2` opcode.
 
 ## Future ideas
 
@@ -94,7 +95,6 @@ At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believ
 
 The instance of Atomic Cloak smart contract is deployed on following networks (to be updated):
 
-
-| Networks       |            Address      |
-|----------------|-------------------------|
-| sepolia        |  `0x...`                |
+| Networks | Address |
+| -------- | ------- |
+| sepolia  | `0x...` |
