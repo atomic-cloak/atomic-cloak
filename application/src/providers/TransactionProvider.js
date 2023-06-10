@@ -134,7 +134,7 @@ export const TransactionProvider = ({ children }) => {
 
             const response = await fetch(
                 // "https://atomiccloakapi.frittura.org/api/v1/swap",
-                "http://localhost:7777/api/v1/swap",
+                process.env.BACKEND_HOSTNAME + "/api/v1/swap",
                 {
                     method: "POST",
                     headers: {
@@ -167,7 +167,9 @@ export const TransactionProvider = ({ children }) => {
     const pollSwap = async (swapId) => {
         // console.log("isPolling", isPolling);
         const response = await fetch(
-            "http://localhost:7777/api/v1/swap/mirror/?swapId=" + swapId
+            process.env.BACKEND_HOSTNAME +
+                "/api/v1/swap/mirror/?swapId=" +
+                swapId
         );
         const data = await response.json();
         console.log(data);
