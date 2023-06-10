@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import Chains from "@/components/Section/Chains";
-import Details from "@/components/Section/Details";
 import Quantity from "@/components/Section/Quantity";
 import { TransactionContext } from "@/providers/TransactionProvider";
 
@@ -67,7 +66,10 @@ const Card: React.FC = ({ mode }: { mode?: string }) => {
               <div>Receiving Chain</div>
             </div>
             <Chains />
-            <Details />
+            <div className={style.formHeader}>
+              <div>Fee</div>
+            </div>
+            <div className={style.transferPropContainer}>0.0001</div>
             <div onClick={(e) => handleSubmit(e)} className={style.swapButton}>
               Swap
             </div>
