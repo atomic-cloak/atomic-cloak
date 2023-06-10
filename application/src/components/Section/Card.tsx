@@ -8,6 +8,7 @@ const style = {
   content: `bg-[#191B1F] w-[30rem] rounded-2xl p-4`,
   formHeader: `px-2 flex items-center justify-between font-semibold text-xl`,
   transferPropInput: `bg-transparent placeholder:text-[#B2B9D2] outline-none w-full text-2xl`,
+  transferPropInput2: `bg-transparent text-[#B2B9D2] outline-none w-full text-2xl`,
   transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-4 text-xl border border-[#20242A] hover:border-[#41444F] flex justify-between`,
   swapButton: `bg-[#3898FF] my-2 rounded-2xl py-4 px-8 text-xl font-semibold flex items-center justify-center cursor-pointer border border-[#2172E5] hover:border-[#234169]`,
 };
@@ -69,7 +70,9 @@ const Card: React.FC = ({ mode }: { mode?: string }) => {
             <div className={style.formHeader}>
               <div>Fee</div>
             </div>
-            <div className={style.transferPropContainer}>0.0001</div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>0.0001</div>
+            </div>
             <div onClick={(e) => handleSubmit(e)} className={style.swapButton}>
               Swap
             </div>
@@ -78,7 +81,7 @@ const Card: React.FC = ({ mode }: { mode?: string }) => {
           <Image
             src="/background.png"
             width={500}
-            height={500}
+            height={550}
             alt="Background"
           />
         )}
