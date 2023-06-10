@@ -12,18 +12,16 @@ import {
   trustWallet,
   ledgerWallet,
 } from "@rainbow-me/rainbowkit/wallets";
+import { sepolia, polygonMumbai } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { TransactionProvider } from "@/providers/TransactionProvider";
-import { mainnet, polygon, optimism, arbitrum, sepolia } from "wagmi/chains";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [sepolia] : []),
-    mainnet,
-    polygon,
-    optimism,
-    arbitrum,
+    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true"
+      ? [sepolia, polygonMumbai]
+      : []),
   ],
   [publicProvider()]
 );

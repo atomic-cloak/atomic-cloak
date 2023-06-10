@@ -21,9 +21,9 @@ contract AtomicCloak is BaseAccount {
     uint256 constant SMALL_FEE = 0.00001 ether;
     uint256 constant LARGE_FEE = 0.001 ether;
 
-    uint256 constant SMALL_VALUE = 0.1 ether;
-    uint256 constant MEDIUM_VALUE = 1 ether;
-    uint256 constant LARGE_VALUE = 10 ether;
+    uint256 constant SMALL_VALUE = 0.001 ether;
+    uint256 constant MEDIUM_VALUE = 0.01 ether;
+    uint256 constant LARGE_VALUE = 0.1 ether;
 
     IEntryPoint private immutable _entryPoint;
 

@@ -11,16 +11,19 @@ const style = {
   chevronArrow: `h-5 w-5 text-gray-400`,
 };
 
-const quantities = [{ amount: "0.001" }, { amount: "0.01" }, { amount: "0.1" }];
+const chains = [
+  { name: "Sepolia", logo: "/images/eth.png", alt: "eth logo" },
+  { name: "Mumbai", logo: "/images/matic.png", alt: "matic logo" },
+];
 
-const Quantity: React.FC = () => {
-  const [selected, setSelected] = useState(quantities[0]);
+const Chains: React.FC = () => {
+  const [selected, setSelected] = useState(chains[0]);
 
   return (
     <Listbox value={selected} onChange={setSelected}>
       <div className={style.wrapper}>
         <Listbox.Button className={style.container}>
-          <span className={style.quantitySelector}>{selected.amount}</span>
+          <span className={style.quantitySelector}>{selected.name}</span>
           <span className={style.chevronContainer}>
             <AiOutlineDown className={style.chevronArrow} />
           </span>
@@ -32,7 +35,7 @@ const Quantity: React.FC = () => {
           leaveTo="opacity-0"
         >
           <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-            {quantities.map((quantity, index) => (
+            {chains.map((chain, index) => (
               <Listbox.Option
                 key={index}
                 className={({ active }) =>
@@ -40,7 +43,7 @@ const Quantity: React.FC = () => {
                     active ? "bg-amber-100 text-amber-900" : "text-gray-900"
                   }`
                 }
-                value={quantity}
+                value={chain}
               >
                 {({ selected }) => (
                   <>
@@ -49,7 +52,7 @@ const Quantity: React.FC = () => {
                         selected ? "font-medium" : "font-normal"
                       }`}
                     >
-                      {quantity.amount}
+                      {chain.name}
                     </span>
                     {selected ? (
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
@@ -67,4 +70,4 @@ const Quantity: React.FC = () => {
   );
 };
 
-export default Quantity;
+export default Chains;
