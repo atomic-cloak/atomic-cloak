@@ -5,12 +5,20 @@ import { TransactionContext } from "@/providers/TransactionProvider";
 
 const Modal = () => {
   const cancelButtonRef = useRef(null);
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
   const { swapDetails, isCreated } = useContext(TransactionContext);
 
   useEffect(() => {
     if (isCreated) setOpen(true);
   }, [isCreated]);
+
+  const chainIDs = {
+    Sepolia: 11155111,
+    Mumbai: 80001,
+    OptimismGoerli: 420,
+    ZkSyncEra: 324,
+    Mantle: 5001,
+  };
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -59,10 +67,32 @@ const Modal = () => {
                       Atomic Swap Created
                     </Dialog.Title>
                     <div className="mt-2">
-                      {swapDetails.receivingChainName ? (
+                      {swapDetails.value ? (
+                        <div className="flex justify-between">
+                          <dt className="flex">
+                            Value
+                            <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
+                              {swapDetails.value}
+                            </span>
+                          </dt>
+                        </div>
+                      ) : null}
+                      <br />
+                      {swapDetails.chainID ? (
                         <div className="flex justify-between">
                           <dt className="flex">
                             Chain
+                            <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
+                              {swapDetails.chainID}
+                            </span>
+                          </dt>
+                        </div>
+                      ) : null}
+                      <br />
+                      {swapDetails.receivingChainName ? (
+                        <div className="flex justify-between">
+                          <dt className="flex">
+                            Receiving Chain
                             <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs tracking-wide text-gray-600">
                               {swapDetails.receivingChainName}
                             </span>

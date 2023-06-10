@@ -14,23 +14,23 @@ const style = {
 };
 
 const Card = ({ mode }: { mode?: string }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isNew, setIsNew] = useState<boolean>(true);
 
   useEffect(() => {
     switch (mode) {
       case "open":
-        setIsOpen(true);
+        setIsNew(true);
         break;
       case "closed":
-        setIsOpen(false);
+        setIsNew(false);
         break;
       default:
-        setIsOpen(true);
+        setIsNew(true);
         break;
     }
   }, []);
 
-  const { formData, handleChange, sendOpenSwapTransaction, isLoading } =
+  const { formData, handleChange, sendOpenSwapTransaction, isLoading, isOpen } =
     useContext(TransactionContext);
 
   const handleSubmit = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -45,37 +45,44 @@ const Card = ({ mode }: { mode?: string }) => {
   return (
     <div className="flex flex-col rounded-2xl px-6 sm:px-8">
       <div className={style.content}>
-        {isOpen ? (
+        {isNew ? (
           <>
-            <div className={style.formHeader}>
-              <div>Quantity</div>
-            </div>
-            <Quantity />
-            <div className={style.formHeader}>
-              <div>Receiving Address</div>
-            </div>
-            <div className={style.transferPropContainer}>
-              <input
-                type="text"
-                className={style.transferPropInput}
-                placeholder="0x..."
-                value={formData.addressTo}
-                onChange={(e) => handleChange(e.target.value, "addressTo")}
-              />
-            </div>
-            <div className={style.formHeader}>
-              <div>Receiving Chain</div>
-            </div>
-            <Chains />
-            <div className={style.formHeader}>
-              <div>Fee</div>
-            </div>
-            <div className={style.transferPropContainer}>
-              <div className={style.transferPropInput2}>0.0001</div>
-            </div>
-            <div onClick={(e) => handleSubmit(e)} className={style.swapButton}>
-              Swap
-            </div>
+            {isOpen ? null : (
+              <>
+                <div className={style.formHeader}>
+                  <div>Quantity</div>
+                </div>
+                <Quantity />
+                <div className={style.formHeader}>
+                  <div>Receiving Address</div>
+                </div>
+                <div className={style.transferPropContainer}>
+                  <input
+                    type="text"
+                    className={style.transferPropInput}
+                    placeholder="0x..."
+                    value={formData.addressTo}
+                    onChange={(e) => handleChange(e.target.value, "addressTo")}
+                  />
+                </div>
+                <div className={style.formHeader}>
+                  <div>Receiving Chain</div>
+                </div>
+                <Chains />
+                <div className={style.formHeader}>
+                  <div>Fee</div>
+                </div>
+                <div className={style.transferPropContainer}>
+                  <div className={style.transferPropInput2}>0.0001</div>
+                </div>
+                <div
+                  onClick={(e) => handleSubmit(e)}
+                  className={style.swapButton}
+                >
+                  Swap
+                </div>
+              </>
+            )}
           </>
         ) : (
           <Image
