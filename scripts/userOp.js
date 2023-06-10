@@ -16,7 +16,16 @@ async function main() {
     console.log("Secret: ", Buffer.from(secret).toString("hex"));
 
     const hashedCommitment = await atomicCloak.commitmentToAddress(qx, qy);
+    console.log("qx:", qx);
+    console.log("qy:", qy);
+    const recipient = ethers.utils.randomBytes(20);
+    console.log("Recipient: ", Buffer.from(recipient).toString("hex"));
 
+    const blockNumBefore = await ethers.provider.getBlockNumber();
+    const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+    const timestampBefore = blockBefore.timestamp;
+
+    const nonce = await atomicCloak.getNonce();
     const payload = {
         jsonrpc: "2.0",
         id: 1,
@@ -24,7 +33,7 @@ async function main() {
         params: [
             {
                 sender: process.env.ATOMIC_CLOAK_ADDRESS_MUMBAI,
-                nonce: "0x0",
+                nonce: nonce.toString(),
                 initCode: "0x",
                 callData:
                     "0x685da727" +
@@ -44,6 +53,18 @@ async function main() {
     };
 
     console.log(payload);
+
+    const trs = await atomicCloak.openETH(
+        qx,
+        qy,
+        Buffer.from(recipient).toString("hex"),
+        timestampBefore + 120,
+        {
+            value: ethers.utils.parseEther("0.001"),
+        }
+    );
+    await trs.wait();
+
     const response = await fetch(
         "https://api.stackup.sh/v1/node/fde21eaf3765d1c5fa8bc4ba7b42854beb1b3c0775b2d697286932fbcf3dde1d",
         {

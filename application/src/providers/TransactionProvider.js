@@ -30,14 +30,15 @@ export const TransactionProvider = ({ children }) => {
     // global app states
     const [currentAccount, setCurrentAccount] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isPolling, setIsPolling] = useState(false);
     const [formData, setFormData] = useState({
         addressTo: "",
         amount: "0.01",
-        receivingChainID: "Goerli",
+        receivingChainID: "Sepolia",
     });
     const [swapDetails, setSwapDetails] = useState({
         swapID: "",
-        timestamp: "Goerli",
+        timestamp: "",
     });
 
     // check connection of wallet
@@ -87,12 +88,10 @@ export const TransactionProvider = ({ children }) => {
         console.log("sendOpenSwapTransaction");
         try {
             if (!metamask) return alert("Please install metamask ");
-
             const { addressTo, amount, receivingChainID } = formData;
 
             // get AtomicCloak contract
             const atomicCloak = getAtomicCloakContract();
-
             const parsedAmount = ethers.utils.parseEther(amount);
 
             const secret = ethers.utils.randomBytes(32);
@@ -114,22 +113,27 @@ export const TransactionProvider = ({ children }) => {
                     value: parsedAmount,
                 }
             );
+
             // setting app state
             setIsLoading(true);
             setFormData({
                 addressTo: "",
-                amount: "",
-                receivingChainID: "",
+                amount: "0.01",
+                receivingChainID: "Sepolia",
             });
             const receipt = await trs.wait();
+            const swapId = await atomicCloak.commitmentToAddress(qx, qy);
             console.log("receipt:", receipt);
             setSwapDetails({
                 receivingChainID: timestampBefore + 120,
-                swapID: await commitmentToAddress(qx, qy),
+                swapID: swapId,
             });
 
-            const response = await fetch(
-                "https://atomiccloakapi.frittura.org/api/v1/swap",
+            setIsLoading(false);
+
+            const response = fetch(
+                // "https://atomiccloakapi.frittura.org/api/v1/swap",
+                "http://localhost:7777/api/v1/swap",
                 {
                     method: "POST",
                     headers: {
@@ -137,7 +141,7 @@ export const TransactionProvider = ({ children }) => {
                         "Access-Control-Allow-Origin": "*",
                     },
                     body: JSON.stringify({
-                        z: Buffer.from(secret).toString("hex"),
+                        z: "0x" + Buffer.from(secret).toString("hex"),
                         qx: qx._hex,
                         qy: qy._hex,
                         addressTo: addressTo,
@@ -147,14 +151,35 @@ export const TransactionProvider = ({ children }) => {
                 }
             );
 
-            const data = await response.text();
+            console.log(response);
 
-            console.log(data);
-
-            setIsLoading(false);
+            setIsPolling(true);
+            setTimeout(async () => {
+                await pollSwap(swapId);
+            }, 1000);
         } catch (error) {
+            setIsLoading(false);
             console.error(error);
         }
+    };
+
+    const pollSwap = async (swapId) => {
+        const response = await fetch(
+            "http://localhost:7777/api/v1/swap/mirror/?swapId=" + swapId
+        );
+        const data = await response.json();
+        console.log(data);
+        if (data.result != null) {
+            setIsPolling(false);
+            console.log(swapId, data.result);
+            // router.push("/swap/" + swapID);
+        }
+
+        if (!isPolling) return;
+
+        setTimeout(async () => {
+            await pollSwap(swapId);
+        }, 1000);
     };
 
     // handle form data
@@ -164,15 +189,6 @@ export const TransactionProvider = ({ children }) => {
             [name]: value,
         }));
     };
-
-    // Triger Loading Model
-    useEffect(() => {
-        if (isLoading) {
-            router.push(`/?loading=${currentAccount}`);
-        } else {
-            router.push("/");
-        }
-    }, [isLoading]);
 
     return (
         <TransactionContext.Provider

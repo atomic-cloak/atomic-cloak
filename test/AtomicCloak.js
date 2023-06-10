@@ -43,7 +43,7 @@ describe("AtomicCloak", function () {
             ).not.to.be.reverted;
         });
 
-        it("Should fail to open a ETH swap: invalid value", async function () {
+        it("Should fail to open a ETH swap: invalid value 0", async function () {
             const { atomicCloak } = await loadFixture(deployAtomicCloak);
             secret = ethers.utils.randomBytes(32);
             const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
@@ -56,7 +56,26 @@ describe("AtomicCloak", function () {
                     recipient,
                     (await time.latest()) + 10000,
                     {
-                        value: ethers.utils.parseUnits("0.21", "ether"),
+                        value: ethers.utils.parseUnits("0", "ether"),
+                    }
+                )
+            ).to.be.revertedWith("Invalid message value.");
+        });
+
+        it("Should fail to open a ETH swap: invalid value smaller than fee", async function () {
+            const { atomicCloak } = await loadFixture(deployAtomicCloak);
+            secret = ethers.utils.randomBytes(32);
+            const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
+            const recipient = ethers.Wallet.createRandom().address;
+
+            await expect(
+                atomicCloak.openETH(
+                    qx,
+                    qy,
+                    recipient,
+                    (await time.latest()) + 10000,
+                    {
+                        value: ethers.utils.parseUnits("0.000001", "ether"),
                     }
                 )
             ).to.be.revertedWith("Invalid message value.");

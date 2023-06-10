@@ -2,6 +2,13 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import "@rainbow-me/rainbowkit/styles.css";
 import {
+  goerli,
+  sepolia,
+  gnosisChiado,
+  polygonMumbai,
+  optimismGoerli,
+} from "wagmi/chains";
+import {
   darkTheme,
   RainbowKitProvider,
   getDefaultWallets,
@@ -13,25 +20,24 @@ import {
   ledgerWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { publicProvider } from "wagmi/providers/public";
-import { goerli, sepolia, polygonMumbai } from "wagmi/chains";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { TransactionProvider } from "@/providers/TransactionProvider";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [sepolia, goerli, polygonMumbai],
+  [sepolia, goerli, optimismGoerli, polygonMumbai, gnosisChiado],
   [publicProvider()]
 );
 
 const projectId = "YOUR_PROJECT_ID";
 
 const { wallets } = getDefaultWallets({
-  appName: "RainbowKit demo",
+  appName: "Atomic Cloak",
   projectId,
   chains,
 });
 
 const demoAppInfo = {
-  appName: "Rainbowkit Demo",
+  appName: "Atomic Cloak",
 };
 
 const connectors = connectorsForWallets([
