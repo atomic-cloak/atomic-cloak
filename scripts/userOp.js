@@ -8,8 +8,10 @@ async function main() {
         libraries: { ECCUtils: eccUtils.address },
     });
     const atomicCloak = await AtomicCloak.attach(
-        process.env.ATOMIC_CLOAK_ADDRESS_MUMBAI
+        process.env.ATOMIC_CLOAK_ADDRESS_OPTIMISM_GOERLI
     );
+
+    console.log("AtomicCloak deployed to:", atomicCloak.address);
 
     const secret = ethers.utils.randomBytes(32);
     const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
@@ -32,7 +34,7 @@ async function main() {
         method: "eth_sendUserOperation",
         params: [
             {
-                sender: process.env.ATOMIC_CLOAK_ADDRESS_MUMBAI,
+                sender: process.env.ATOMIC_CLOAK_ADDRESS_OPTIMISM_GOERLI,
                 nonce: nonce.toString(),
                 initCode: "0x",
                 callData:
@@ -43,8 +45,8 @@ async function main() {
                 callGasLimit: "0x214C10",
                 verificationGasLimit: "0x06E360",
                 preVerificationGas: "0x06E360",
-                maxFeePerGas: "0x20",
-                maxPriorityFeePerGas: "0x0",
+                maxFeePerGas: "0xe0",
+                maxPriorityFeePerGas: "0x2f",
                 paymasterAndData: "0x",
                 signature: "0x",
             },
@@ -66,7 +68,8 @@ async function main() {
     await trs.wait();
 
     const response = await fetch(
-        "https://api.stackup.sh/v1/node/fde21eaf3765d1c5fa8bc4ba7b42854beb1b3c0775b2d697286932fbcf3dde1d",
+        "https://api.stackup.sh/v1/node/" +
+            process.env.BUNDLER_API_KEY_OPTIMISM_GOERLI,
         {
             method: "POST",
             headers: {
