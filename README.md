@@ -101,13 +101,16 @@ At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believ
 
 The instance of Atomic Cloak smart contract is deployed on following networks (to be updated):
 
-| Networks           | Address                                      |   UI support    |  Close swap with UserOp    |
+| Networks           | Address                                      |   UI support    |  Close swap with UserOp in UI |
 | ------------------ | -------------------------------------------- |-----------------|----------------------------|
-| sepolia            | `0x6a18426245F240B95378a43769b5688B9794875b` |     Yes         |         No                 |
-| mumbai             | `0xcE250A659fc1090714c2810ec091F7BB95D27eb4` |     Yes         |         Yes                |
-| optimism goerli    | `0x272e066945678DeB96736a1904734cdFdFF074c6` |     Yes         |         Yes                |
+| sepolia            | `0x6a18426245F240B95378a43769b5688B9794875b` |<span style="color:green">__Yes__</span>|<span style="color:red">__No__</span>|
+| mumbai             | `0xcE250A659fc1090714c2810ec091F7BB95D27eb4` |<span style="color:green">__Yes__</span>|<span style="color:green">__Yes__</span>|
+| optimism goerli    | `0x272e066945678DeB96736a1904734cdFdFF074c6` |<span style="color:green">__Yes__</span>|<span style="color:green">__Yes__</span>|
 | zkSync era testnet | `0x...`                                      |                 |                            |
-| mantle             | `0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d` |     No          |         No                 |
+| mantle             | `0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d` |<span style="color:red">__No__</span>|<span style="color:red">__No__</span>|
+
+- __UI support__ depends on whether the network is supported by the GraphQL as we use it to facilitate data flow. "Yes" means that the complete lifecycle of an atomic swap could be performed using the provided UI. "No" means that the UI could only open an atomic swap, but finding a counterparty / liquidity provider, secret communication and closing of the swap must be done manually.
+- __Close swap with UserOp in UI__ is possible when the network supports account abstraction features. Note that we support closing with UserOp in UI only for some chains with AA support because of time limitations. 
 
 ## Account abstraction features
 
