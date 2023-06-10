@@ -4,33 +4,66 @@ import { sendGraphqlRequest } from '../../graphql/request'
 import { OpenSwapRequest } from './types'
 import { getAtomicCloakContract } from '../blockchain/blockchain.service'
 
+const swapDB = {}
+
 export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
-  const { provider, atomicCloak } = await getAtomicCloakContract(
+  const { provider, signer, atomicCloak } = await getAtomicCloakContract(
     openSwapRequest.receivingChainID
   )
-  console.log('Getting commitment', openSwapRequest.z)
   const [qsx, qsy] = await atomicCloak.commitmentFromSharedSecret(
     openSwapRequest.qx,
     openSwapRequest.qy,
-    ethers.utils.randomBytes(32)
+    openSwapRequest.z
   )
-  console.log('qsx', qsx, 'qsy', qsy, 'amount', openSwapRequest.value, ethers.utils.parseUnits(openSwapRequest.value, 'ether'))
 
   const gasPrice = provider.getGasPrice()
   const blockNumberBefore = await provider.getBlockNumber()
   const timestampBefore = (await provider.getBlock(blockNumberBefore)).timestamp
+  const timestamp = timestampBefore + 10000
   const tx = await atomicCloak.openETH(
     qsx,
     qsy,
     openSwapRequest.addressTo,
-    timestampBefore + 10000,
+    timestamp,
     {
       value: `${openSwapRequest.value}`,
       gasPrice
     }
   )
   console.log('Open transaction:', tx)
-  await tx.wait()
+  const swapId = await atomicCloak.commitmentToAddress(openSwapRequest.qx, openSwapRequest.qy)
+  swapDB[swapId.toString('hex')] = { 
+    timelock: timestamp, 
+    tokenContract: '0x', 
+    value: `${openSwapRequest.value}`, 
+    sender: signer.address, 
+    recipient: openSwapRequest.addressTo, 
+    chainId: openSwapRequest.receivingChainID 
+  }
+}
+
+export const getMirror = async (swapId: string) => {
+  const checkGraph = async (swapID) => {
+    const response = await sendGraphqlRequest(graphqlEndpoints[swapDB[swapID].chainId], `
+      query Query ($swapID: String!) {
+        opens(where: { _swapID: $swapID }) {
+          _swapID
+        }
+      }`, { swapID })
+    return response.data.opens.length > 0
+  }
+
+  if (!swapId.startsWith('0x')) {
+    if (await checkGraph(`0x${swapId}`)) {
+      return swapDB[`0x${swapId}`]
+    }
+    return null
+  }
+
+  if (await checkGraph(swapId)) {
+    return swapDB[swapId]
+  }
+  return null
 }
 
 export const getOpenSwapsBySender = async (

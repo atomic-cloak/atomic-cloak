@@ -1,5 +1,5 @@
 import { type Errback, type Request, type Response } from 'express'
-import { openSwap } from './swap.service'
+import { getMirror, openSwap } from './swap.service'
 
 export const open = (req: Request, res: Response, next: Errback) => {
   openSwap(req.body)
@@ -8,3 +8,12 @@ export const open = (req: Request, res: Response, next: Errback) => {
       next(err)
     })
 }
+
+export const mirror = (req: Request, res: Response, next: Errback) => {
+  getMirror(req.query.swapId as string)
+    .then((result) => res.json({ result }))
+    .catch((err) => {
+      next(err)
+    })
+}
+
