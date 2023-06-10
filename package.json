@@ -1,0 +1,16 @@
+{
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@nomicfoundation/hardhat-verify": "^1.0.1",
+    "hardhat": "^2.15.0"
+  },
+  "dependencies": {
+    "@account-abstraction/contracts": "^0.6.0",
+    "@openzeppelin/contracts": "^4.9.1",
+    "api": "^5.0.8",
+    "bignumber": "^1.1.0",
+    "dotenv": "^16.1.4",
+    "userop": "^0.3.0"
+  }
+}

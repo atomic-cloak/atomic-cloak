@@ -1,0 +1,5 @@
+-   verify contracts on etherscan
+-   add more chains
+-   batch trs together
+-   implement more fee options
+-   validate info sent to server from frontend
