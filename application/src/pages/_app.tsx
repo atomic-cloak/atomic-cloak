@@ -19,11 +19,11 @@ import { mainnet, polygon, optimism, arbitrum, sepolia } from "wagmi/chains";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
+    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [sepolia] : []),
     mainnet,
     polygon,
     optimism,
     arbitrum,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [sepolia] : []),
   ],
   [publicProvider()]
 );
