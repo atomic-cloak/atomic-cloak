@@ -5,10 +5,10 @@ import { AiOutlineDown } from "react-icons/ai";
 import { TransactionContext } from "@/providers/TransactionProvider";
 
 const style = {
-  wrapper: `w-screen flex items-center justify-center mt-14`,
+  wrapper: `flex justify-center items-center h-screen mt-14`,
   content: `bg-[#191B1F] w-[30rem] rounded-2xl p-4`,
   transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-4 text-xl border border-[#20242A] hover:border-[#41444F]  flex justify-between`,
-  transferPropInput: `bg-transparent placeholder:text-[#B2B9D2] outline-none mb-6 w-full text-2xl`,
+  transferPropInput: `bg-transparent placeholder:text-[#B2B9D2] outline-none w-full text-2xl`,
   currencySelector: `flex w-1/4`,
   currencySelectorContent: `w-full h-min flex justify-between items-center bg-[#2D2F36] hover:bg-[#41444F] rounded-2xl text-xl font-medium cursor-pointer p-2 mt-[-0.2rem]`,
   currencySelectorIcon: `flex items-center`,

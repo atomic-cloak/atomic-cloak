@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import Dropdown from "@/components/Dropdown";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { TransactionContext } from "@/providers/TransactionProvider";
 
 const style = {
@@ -51,29 +52,7 @@ const Header = () => {
         </div>
       </div>
       <div className={style.buttonsContainer}>
-        <Dropdown />
-        {currentAccount ? (
-          <div className={`${style.button} ${style.buttonPadding}`}>
-            <div className={`${style.buttonTextContainer}`}>
-              {currentAccount.slice(0, 7) + `...` + currentAccount.slice(35)}
-            </div>
-          </div>
-        ) : (
-          <div
-            onClick={() => connectWallet()}
-            className={`${style.button} ${style.buttonPadding}`}
-          >
-            <div className={`${style.buttonAccent} ${style.buttonPadding}`}>
-              Connect Wallet
-            </div>
-          </div>
-        )}
-
-        <div className={`${style.button} ${style.buttonPadding}`}>
-          <div className={`${style.buttonIconContainer} mx-2`}>
-            <HiOutlineDotsVertical />
-          </div>
-        </div>
+        <ConnectButton />
       </div>
     </div>
   );
