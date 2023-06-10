@@ -13,6 +13,8 @@ app.post("/swap", (req, res, next) => {
     console.log("Got post:", req.body);
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.send("Secret stored! ");
+
+    const { z, qx, qy } = req.body;
 });
 
 app.listen(PORT);
