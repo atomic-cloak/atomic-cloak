@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="graphic/logo_cropped.png">
+</p>
+
 # Specificaitons
 
 ## Atomic Cloak
@@ -88,7 +92,7 @@ At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believ
 
 ## Deployments
 
-The instance of Atomic Cloak smart contract is deployed on following networks:
+The instance of Atomic Cloak smart contract is deployed on following networks (to be updated):
 
 
 | Networks       |            Address      |
