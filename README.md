@@ -2,11 +2,9 @@
   <img src="graphics/logo.png">
 </p>
 
-# Specifications
+***Atomic Cloak.*** _Mixer-style privacy preserving cross-chain atomic swaps. Withdraw ETH and ERC-20 from L2 anonymously and instantly via a liquidity provider._
 
-## Atomic Cloak
-
-_Mixer-style privacy preserving cross-chain atomic swaps. Withdraw ETH and ERC-20 from L2 anonymously and instantly via a liquidity provider._
+# Idea
 
 ## Rationale
 
@@ -39,6 +37,8 @@ The Atomic Cloak protocol is agnostic to how the swap counterparties agree on th
 
 For simplicity, our web interface implements a swap liquidity provider: an entity that hold liquidity on different chains and always accepts swap requests. It is possible to design different ways to find a swap party, but it necessarily must include a secure communication channel for cryptography reasons. In our solution, such channel is communication between UI frontend and backend.
 
+## Specification
+
 ### Cryptography
 
 The privacy and atomicity of Atomic Cloak relies on the [discrete log problem](https://en.wikipedia.org/wiki/Discrete_logarithm), the same cryptography that protects Ethereum secret keys. The protocol is similar to Schnorr signature with an empty message hash.
@@ -54,9 +54,10 @@ The privacy and atomicity of Atomic Cloak relies on the [discrete log problem](h
 6. Bob can now compute $s_A = s_B - z$ and withdraw from Alice's contract.
 
 ### Atomic Cloak swap flows
-
+_____
 **Execution flow of a successful Atomic Cloak swap:**
 ![](graphics/AtomicCloak_success.svg)
+_____
 **Execution flow of a timed out Atomic Cloak swap:**
 ![](graphics/AtomicCloak_fail.svg)
 
@@ -74,7 +75,7 @@ We faced several challenges :
 
 **Solution to 2**: use The Graph to listen to emitted events.
 
-**Solution to 3**: account abstraction. Using [EIP-4337][https://eips.ethereum.org/EIPS/eip-4337] protocol, the SLT contract itself can pay swap closure fee for a small fraction of the swap amount. To close a swap, a user creates a UserOperation with the reveal data, and can withdraw tokens to a fresh empty account. Note that a user can also close with a transaction (e.g. to use on chains with no AA features), but this will provide risks for privacy.
+**Solution to 3**: account abstraction. Using [EIP-4337][https://eips.ethereum.org/EIPS/eip-4337] protocol, the SLT contract itself can pay swap closure fee for a small fraction of the swap amount. To close a swap, a user can create a UserOperation with the reveal data, and can withdraw tokens to a fresh empty account. Note that a user can also close with a transaction (e.g. to use on chains with no AA features), but this will provide risks for privacy.
 
 **Solution to 4**: account abstraction. We use transaction batching feature of EIP-4337 to open many atomic swaps with a single transaction.
 
@@ -100,7 +101,18 @@ The instance of Atomic Cloak smart contract is deployed on following networks (t
 | sepolia  | `0x2203dD12bA5deF7ace53020CDa369E5b636F9DAb` |
 | mumbai   | `0x1e03f59481c74c5eD2ce9F03bfDF84181d559A54` |
 
+## Account abstraction features
+
+Atomic Cloak project uses two account abstraction features.
+
+1. An instance of Atomic Cloak is also an account abstraction [BaseAccount](https://github.com/eth-infinitism/account-abstraction/blob/main/contracts/core/BaseAccount.sol) with a custom user operation verification logic. This is done so atomic swaps could be closed into a fresh account and the gas is paid from the swap tokens.
+The custom `_validateSignature` function checks the swap commitment opening and allows to close a swap once the corresponding secret is provided. There is no owner logic and no account with a special control of Atomic Cloak contract funds.
+2. Liquidity provider holds funds in a [SimpleAccount](https://github.com/eth-infinitism/account-abstraction/blob/main/contracts/samples/SimpleAccount.sol) and can use transaction batching functionality to open multiple swaps at the same time. There are two benefits:
+    - gas optimization: submit one transaction instead of several;
+    - further privacy protection: LP can collect opening requests for some period of time, shuffle them and open all swaps in a single transaction. This will further obfuscate the order and timing of swap requests.
+
 ## Current limitations
 
 - Although the Atomic Cloak smart contract supports the ERC-20 atomic swaps, this functionality was not thoroughly tested. Additionally, account abstraction swap close is available only for ether atomic swaps.
 - Once expired, liquidity provider has to close a swap as soon as possible. Otherwise their counterparty can burn the tokens as gas fees by calling `close` using `userOp`. This happens because `validateUserOp` cannot access the last block timestamp to check whether a swap expired.
+- Currently liquidity provider does not batch swap openings, it provides only single openings. However, the smart contracts include all necessary code.
