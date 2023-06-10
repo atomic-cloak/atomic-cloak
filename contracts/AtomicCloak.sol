@@ -57,6 +57,8 @@ contract AtomicCloak is BaseAccount {
         _entryPoint = IEntryPoint(__entryPoint);
     }
 
+    receive() external payable {}
+
     function commitmentFromSecret(
         uint256 _secretKey
     ) public pure returns (uint256, uint256) {
