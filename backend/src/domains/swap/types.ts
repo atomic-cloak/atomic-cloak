@@ -4,5 +4,5 @@ export interface OpenSwapRequest {
   qy: string
   receivingChainID: string
   addressTo: string
-  amount: string
+  value: string
 }

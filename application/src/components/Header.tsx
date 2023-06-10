@@ -1,31 +1,23 @@
 import React from "react";
+import Image from "next/image";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const style = {
-  wrapper: `p-4 w-screen flex justify-between items-center`,
-  headerLogo: `flex w-1/4 items-center justify-start`,
-  nav: `flex-1 flex justify-center items-center`,
-  navItemsContainer: `flex bg-[#191B1F] rounded-3xl`,
-  navItem: `px-4 py-2 m-1 flex items-center text-lg font-semibold text-[0.9rem] rounded-3xl`,
-  activeNavItem: `bg-[#20242A]`,
-  buttonsContainer: `flex w-1/4 justify-end items-center`,
-  button: `flex items-center bg-[#191B1F] rounded-2xl mx-2 text-[0.9rem] text-md font-semibold cursor-pointer`,
   buttonPadding: `p-1.5 px-1.5`,
   buttonTextContainer: `h-8 flex items-center`,
-  buttonIconContainer: `flex items-center justify-center w-8 h-8`,
+  nav: `flex-1 flex justify-center items-center`,
+  headerLogo: `flex w-1/4 items-center justify-start`,
+  buttonsContainer: `flex w-1/4 justify-end items-center`,
+  wrapper: `p-4 w-screen flex justify-between items-center`,
+  button: `flex items-center bg-[#191B1F] rounded-2xl mx-2 text-[0.9rem] text-md font-semibold cursor-pointer`,
   buttonAccent: `bg-[#191B1F] px-0 border border-[#191B1F] hover:border-[#191B1F] h-full rounded-2xl flex items-center justify-center text-white`,
 };
 
-const Header = () => {
+const Header: React.FC = () => {
   return (
     <div className={style.wrapper}>
       <div className={style.headerLogo}>
         {/* <Image src="/images/react.png" alt="react" height={40} width={40} /> */}
-      </div>
-      <div className={style.nav}>
-        <div className={style.navItemsContainer}>
-          <div className={`${style.navItem}`}>{true ? "OPEN" : "CLOSE"}</div>
-        </div>
       </div>
       <div className={style.buttonsContainer}>
         <ConnectButton.Custom>
