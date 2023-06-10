@@ -1,24 +1,23 @@
 import { ethers } from 'ethers'
 import {
   contractABI,
-  contractAddress,
+  contractAddresses,
+  rpcProviders,
   graphqlEndpoints
 } from '../../constants'
 import { sendGraphqlRequest } from '../../graphql/request'
 import { OpenSwapRequest } from './types'
 
-const getAtomicCloakContract = () => {
-  const provider = new ethers.providers.JsonRpcProvider(
-    'https://rpc2.sepolia.org'
-  )
+const getAtomicCloakContract = (chainId) => {
+  const provider = new ethers.providers.JsonRpcProvider(rpcProviders[chainId])
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? '', provider)
   const signer = wallet.connect(provider)
-  const atomicCloak = new ethers.Contract(contractAddress, contractABI, signer)
+  const atomicCloak = new ethers.Contract(contractAddresses[chainId], contractABI, signer)
   return { provider, signer, atomicCloak }
 }
 
 export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
-  const { provider, atomicCloak } = getAtomicCloakContract()
+  const { provider, atomicCloak } = getAtomicCloakContract(openSwapRequest.receivingChainID)
   const [qsx, qsy] = await atomicCloak.commitmentFromSharedSecret(
     openSwapRequest.qx,
     openSwapRequest.qy,
