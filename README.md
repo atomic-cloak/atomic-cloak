@@ -7,15 +7,18 @@ _Mixer-style privacy preserving cross-chain atomic swaps. Withdraw ETH and ERC-2
 ### TL;DR:
 
 Problem:
+
 1. Slow or centralized withdrawals from optimistic L2;
 2. Everlasting desire for token anonymization tools.
 
-Solution: Atomic swaps using Schnorr locked time contracts.
+Solution: Atomic swaps using Schnorr-locked time contracts.
+
 ### Problem
 
 ETH and ERC-20 token transfers between L2s and L1 have several limitations. For optimistic rollups, a user must choose among two evils: either to wait for long withdrawal period or rely on a centralized cross-chain service.
 
 ZK rollups offer a much better deal in theory: tokens could be withdrawn as fast as a ZK proof is generated and verified and the technology can be used to provide a native privacy protection. However, in practice current ZK-rollups are still not instant (e.g. zkSync waits for 1 day to be on the safe side), and they face pressure from governments to avoid any anonymization functionality.
+
 ### Solution
 
 Atomic swaps based on Hash Timelocked Contracts are a well-know beast in the crypto community. The cryptography of HTLC allows two peers to atomically exchange assets (either each gets what they want or nobody gets anything), and no trust is needed. (see Section 3.1 [here](https://eprint.iacr.org/2019/896.pdf)) The cryptographical core of the algorithm can facilitate asset exchange across different chains.
@@ -36,17 +39,17 @@ Atomic swaps have drawbacks:
 
 Atomic Cloak alleviates challenges 1, 2 and 3, challenges 4 and 5 could be tackled in the future.
 
-__Solution to 1__: liquidity providers. LPs have tokens on all supported chains and accept all requests for swaps for a fee. LPs offer a centralization risk: they can deanonimize the swaps that they facilitated but cannot steal funds. In Atomic Cloak protocol, anyone can be a liquidity provider.
+**Solution to 1**: liquidity providers. LPs have tokens on all supported chains and accept all requests for swaps for a fee. LPs offer a centralization risk: they can deanonimize the swaps that they facilitated but cannot steal funds. In Atomic Cloak protocol, anyone can be a liquidity provider.
 
-__Solution to 2__: we run only one LP now and offer UI to interact with only one provider. This is not seen from deployed smart contracts, they are LP agnostic. UI frontend to backend communication plays the role of a secure communication channel between swap peers.
+**Solution to 2**: we run only one LP now and offer UI to interact with only one provider. This is not seen from deployed smart contracts, they are LP agnostic. UI frontend to backend communication plays the role of a secure communication channel between swap peers.
 
-__Solution to 3__: account abstraction. Using [EIP-4337][https://eips.ethereum.org/EIPS/eip-4337] protocol, the SLT contract itself can pay swap closure fee for a small fraction of the swap amount. To close a swap, a user creates a UserOperation with the reveal data, and can withdraw tokens to a fresh empty account. Note that a user can also close with a transaction (e.g. to use on chains with no AA features), but this will provide risks for privacy.
+**Solution to 3**: account abstraction. Using [EIP-4337][https://eips.ethereum.org/EIPS/eip-4337] protocol, the SLT contract itself can pay swap closure fee for a small fraction of the swap amount. To close a swap, a user creates a UserOperation with the reveal data, and can withdraw tokens to a fresh empty account. Note that a user can also close with a transaction (e.g. to use on chains with no AA features), but this will provide risks for privacy.
 
 ## Future ideas
 
 At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believe in the value of the project and suggest the following improvements to make it production-ready.
 
-1. __Decentralize.__ Create a UI to find atomic swap peers and exchange secret information in an encrypted channel. Allow liquidity provider registration to support instant swaps.
-2. __Exchange.__ Allow opening contracts hold different tokens (e.g. different ERC-20, or ether and ERC-20), as agreed off-chain by peers. This would further boost privacy and allow token exchange functionality.
-3. __Add Noise Creators.__ To boost privacy, create a service to create noise swaps. Noise creators will open and close swaps among different chains, so other swaps could be obfuscated among the noise.
-4. __Do general reveal of secret.__ The protocol could be generalized beyond atomic token swaps by replacing the swap closing logic. In this way other atomic revals of secret could be implemented.
+1. **Decentralize.** Create a UI to find atomic swap peers and exchange secret information in an encrypted channel. Allow liquidity provider registration to support instant swaps.
+2. **Exchange.** Allow opening contracts hold different tokens (e.g. different ERC-20, or ether and ERC-20), as agreed off-chain by peers. This would further boost privacy and allow token exchange functionality.
+3. **Add Noise Creators.** To boost privacy, create a service to create noise swaps. Noise creators will open and close swaps among different chains, so other swaps could be obfuscated among the noise.
+4. **Do general reveal of secret.** The protocol could be generalized beyond atomic token swaps by replacing the swap closing logic. In this way other atomic revals of secret could be implemented.

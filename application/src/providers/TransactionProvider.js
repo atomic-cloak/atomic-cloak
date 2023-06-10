@@ -32,7 +32,7 @@ export const TransactionProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         addressTo: "",
-        amount: "",
+        amount: "0.01",
         receivingChainID: "",
     });
 
@@ -96,7 +96,6 @@ export const TransactionProvider = ({ children }) => {
             const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
             console.log("qx:", qx._hex);
             console.log("qy:", qy._hex);
-            const recipient = "0xBDd182877dEc564d96c4A6e21920F237487d01aD";
             const provider = new ethers.providers.Web3Provider(eth);
             const blockNumBefore = await provider.getBlockNumber();
             const blockBefore = await provider.getBlock(blockNumBefore);
@@ -105,7 +104,7 @@ export const TransactionProvider = ({ children }) => {
             const trs = await atomicCloak.openETH(
                 qx,
                 qy,
-                recipient,
+                addressTo,
                 timestampBefore + 120,
                 {
                     value: parsedAmount,
@@ -148,10 +147,10 @@ export const TransactionProvider = ({ children }) => {
     };
 
     // handle form data
-    const handleChange = (e, name) => {
+    const handleChange = (value, name) => {
         setFormData((prevState) => ({
             ...prevState,
-            [name]: e.target.value,
+            [name]: value,
         }));
     };
 

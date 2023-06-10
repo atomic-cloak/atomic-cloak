@@ -1,6 +1,7 @@
-import { Fragment, useState } from "react";
+import { Fragment, useContext } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { AiOutlineDown, AiOutlineCheck } from "react-icons/ai";
+import { TransactionContext } from "@/providers/TransactionProvider";
 
 const style = {
   wrapper: `relative mt-1`,
@@ -11,16 +12,18 @@ const style = {
   chevronArrow: `h-5 w-5 text-gray-400`,
 };
 
+
 const quantities = [{ amount: "0.001" }, { amount: "0.01" }, { amount: "0.1" }];
 
 const Quantity: React.FC = () => {
-  const [selected, setSelected] = useState(quantities[0]);
+    const { formData, handleChange } =
+    useContext(TransactionContext);
 
   return (
-    <Listbox value={selected} onChange={setSelected}>
+    <Listbox value={formData.amount} onChange={(e) => handleChange(e.amount, "amount")}>
       <div className={style.wrapper}>
         <Listbox.Button className={style.container}>
-          <span className={style.quantitySelector}>{selected.amount}</span>
+          <span className={style.quantitySelector}>{formData.amount}</span>
           <span className={style.chevronContainer}>
             <AiOutlineDown className={style.chevronArrow} />
           </span>
