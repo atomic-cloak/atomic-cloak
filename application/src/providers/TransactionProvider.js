@@ -123,6 +123,7 @@ export const TransactionProvider = ({ children }) => {
             });
             const receipt = await trs.wait();
             const swapId = await atomicCloak.commitmentToAddress(qx, qy);
+            console.log("swapId:", swapId, "from", qx, qy);
             console.log("receipt:", receipt);
             setSwapDetails({
                 receivingChainID: timestampBefore + 120,
@@ -131,7 +132,7 @@ export const TransactionProvider = ({ children }) => {
 
             setIsLoading(false);
 
-            const response = fetch(
+            const response = await fetch(
                 // "https://atomiccloakapi.frittura.org/api/v1/swap",
                 "http://localhost:7777/api/v1/swap",
                 {
@@ -153,7 +154,7 @@ export const TransactionProvider = ({ children }) => {
 
             console.log(response);
 
-            setIsPolling(true);
+            // setIsPolling(true);
             setTimeout(async () => {
                 await pollSwap(swapId);
             }, 1000);
@@ -164,18 +165,20 @@ export const TransactionProvider = ({ children }) => {
     };
 
     const pollSwap = async (swapId) => {
+        // console.log("isPolling", isPolling);
         const response = await fetch(
             "http://localhost:7777/api/v1/swap/mirror/?swapId=" + swapId
         );
         const data = await response.json();
         console.log(data);
-        if (data.result != null) {
-            setIsPolling(false);
+        if (data.result) {
+            // setIsPolling(false);
             console.log(swapId, data.result);
             // router.push("/swap/" + swapID);
+            return;
         }
 
-        if (!isPolling) return;
+        // if (!isPolling) return;
 
         setTimeout(async () => {
             await pollSwap(swapId);
