@@ -10,7 +10,7 @@ const Home: NextPage = () => {
   const { isLoading } = useContext(TransactionContext);
 
   return (
-    <div className="h-screen max-h-screen h-min-screen w-screen bg-[#000000] text-white select-none flex flex-col justify-between">
+    <div className="fixed h-screen max-h-screen h-min-screen w-screen bg-[#000000] text-white select-none flex flex-col justify-between">
       <Head>
         <title>Atomic Cloak - Privacy preserving atomic swaps</title>
         <meta name="description" content="privacy preserving atomic swaps" />
