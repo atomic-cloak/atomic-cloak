@@ -1,3 +1,5 @@
+# Specificaitons
+
 ## Atomic Cloak
 
 _Mixer-style privacy preserving cross-chain atomic swaps. Withdraw ETH and ERC-20 from L2 anonymously and instantly via a liquidity provider._
@@ -81,3 +83,14 @@ At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believ
 2. **Exchange.** Allow opening contracts hold different tokens (e.g. different ERC-20, or ether and ERC-20), as agreed off-chain by peers. This would further boost privacy and allow token exchange functionality.
 3. **Add Noise Creators.** To boost privacy, create a service to create noise swaps. Noise creators will open and close swaps among different chains, so other swaps could be obfuscated among the noise.
 4. **Do general reveal of secret.** The protocol could be generalized beyond atomic token swaps by replacing the swap closing logic. In this way other atomic revals of secret could be implemented.
+
+# Development
+
+## Deployments
+
+The instance of Atomic Cloak smart contract is deployed on following networks:
+
+
+| Networks       |            Address      |
+|----------------|-------------------------|
+| sepolia        |  `0x...`                |
