@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/Container";
@@ -15,7 +14,7 @@ const style = {
   buttonAccent: `bg-[#191B1F] px-0 border border-[#191B1F] hover:border-[#191B1F] h-full rounded-2xl flex items-center justify-center text-white`,
 };
 
-const Header: React.FC = () => {
+const Header = () => {
   return (
     <header className="py-10">
       <Container>

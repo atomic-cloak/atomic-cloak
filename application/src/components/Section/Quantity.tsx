@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from "react";
+import { Fragment, useContext } from "react";
 import { AiOutlineDown } from "react-icons/ai";
 import { Listbox, Transition } from "@headlessui/react";
 import { TransactionContext } from "@/providers/TransactionProvider";
@@ -13,7 +13,7 @@ const style = {
 
 const quantities = [{ amount: "0.001" }, { amount: "0.01" }, { amount: "0.1" }];
 
-const Quantity: React.FC = () => {
+const Quantity = () => {
   const { formData, handleChange } = useContext(TransactionContext);
 
   return (

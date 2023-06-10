@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import Chains from "@/components/Section/Chains";
 import Quantity from "@/components/Section/Quantity";
