@@ -147,7 +147,8 @@ export const TransactionProvider = ({ children }) => {
                         qx: qx._hex,
                         qy: qy._hex,
                         addressTo: addressTo,
-                        receivingChainID: receivingChainID,
+                        sendingChainID: provider.network.name.toLowerCase(),
+                        receivingChainID: receivingChainID.toLowerCase(),
                         value: parsedAmount.toString(),
                     }),
                 }
@@ -175,7 +176,7 @@ export const TransactionProvider = ({ children }) => {
         console.log(data);
         if (data.result) {
             console.log(swapId, data.result);
-            router.push("/swap/" + swapID);
+            // router.push("/swap/" + swapID);
             return;
         }
 

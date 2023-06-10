@@ -36,7 +36,8 @@ export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
     value: `${openSwapRequest.value}`,
     sender: signer.address,
     recipient: openSwapRequest.addressTo,
-    chainId: openSwapRequest.receivingChainID,
+    sendingChainID: openSwapRequest.sendingChainID,
+    receivingChainID: openSwapRequest.receivingChainID,
     mirrorSwapId: mirrorSwapId
   }
 
@@ -61,9 +62,9 @@ export const getMirror = async (swapId: string) => {
     if (!swapDB[swapID]) {
       return null
     }
-    console.log('GRAPH:', graphqlEndpoints[swapDB[swapID].chainId])
+    console.log('GRAPH:', graphqlEndpoints[swapDB[swapID].receivingChainID])
     const response = await sendGraphqlRequest(
-      graphqlEndpoints[swapDB[swapID].chainId],
+      graphqlEndpoints[swapDB[swapID].receivingChainID],
       `
       query Query ($swapID: String!) {
         opens(where: { _swapID: $swapID }) {
