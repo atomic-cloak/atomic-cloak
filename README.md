@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="graphic/logo_cropped.png">
+  <img src="graphics/logo.png">
 </p>
 
 # Specifications
@@ -56,9 +56,9 @@ The privacy and atomicity of Atomic Cloak relies on the [discrete log problem](h
 ### Atomic Cloak swap flows
 
 **Execution flow of a successful Atomic Cloak swap:**
-![](graphic/AtomicCloak_success.svg)
+![](graphics/AtomicCloak_success.svg)
 **Execution flow of a timed out Atomic Cloak swap:**
-![](graphic/AtomicCloak_fail.svg)
+![](graphics/AtomicCloak_fail.svg)
 
 ## Challenges
 
