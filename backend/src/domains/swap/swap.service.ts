@@ -13,7 +13,7 @@ export const openSwap = async (openSwapRequest: OpenSwapRequest) => {
   const [qsx, qsy] = await atomicCloak.commitmentFromSharedSecret(
     openSwapRequest.qx,
     openSwapRequest.qy,
-    ethers.utils.randomBytes(32)
+    openSwapRequest.z
   )
 
   const gasPrice = provider.getGasPrice()
