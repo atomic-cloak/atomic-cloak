@@ -97,5 +97,5 @@ The instance of Atomic Cloak smart contract is deployed on following networks (t
 
 | Networks | Address                                      |
 | -------- | -------------------------------------------- |
-| sepolia  | `0xF1e9A2223e58A38DAC68F558Ba1Fb4A418f5FCD5` |
+| sepolia  | `0x2203dD12bA5deF7ace53020CDa369E5b636F9DAb` |
 | mumbai   | `0x1e03f59481c74c5eD2ce9F03bfDF84181d559A54` |
