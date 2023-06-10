@@ -17,7 +17,7 @@ const Header: React.FC = () => {
   return (
     <div className={style.wrapper}>
       <div className={style.headerLogo}>
-        {/* <Image src="/images/react.png" alt="react" height={40} width={40} /> */}
+        <Image src="/images/logo.png" alt="react" height={40} width={40} />
       </div>
       <div className={style.buttonsContainer}>
         <ConnectButton.Custom>

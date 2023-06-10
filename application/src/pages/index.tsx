@@ -9,7 +9,7 @@ const Home: NextPage = () => {
       <Head>
         <title>Atomic Cloak - Privacy preserving atomic swaps</title>
         <meta name="description" content="privacy preserving atomic swaps" />
-        <link rel="icon" href="./favicon.ico" />
+        <link rel="icon" href="/images/favicon.png" />
       </Head>
       <Header />
       <Main />
