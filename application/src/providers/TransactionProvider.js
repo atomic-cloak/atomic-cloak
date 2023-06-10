@@ -109,8 +109,8 @@ export const TransactionProvider = ({ children }) => {
             const secret = ethers.utils.randomBytes(32);
             console.log("Secret: ", Buffer.from(secret).toString("hex"));
             const [qx, qy] = await atomicCloak.commitmentFromSecret(secret);
-            console.log("qx:", qx);
-            console.log("qy:", qy);
+            console.log("qx:", qx._hex);
+            console.log("qy:", qy._hex);
             const recipient = "0xBDd182877dEc564d96c4A6e21920F237487d01aD";
             const provider = new ethers.providers.Web3Provider(eth);
             const blockNumBefore = await provider.getBlockNumber();
@@ -126,6 +126,12 @@ export const TransactionProvider = ({ children }) => {
                     value: 100,
                 }
             );
+            // setting app state
+            setIsLoading(true);
+            setFormData({
+                addressTo: "",
+                amount: "",
+            });
             const receipt = await trs.wait();
             console.log("receipt:", receipt);
 
@@ -137,30 +143,14 @@ export const TransactionProvider = ({ children }) => {
                 },
                 body: JSON.stringify({
                     z: Buffer.from(secret).toString("hex"),
+                    qx: qx._hex,
+                    qy: qy._hex,
                 }),
             });
 
-            const data = await response.json();
+            const data = await response.text();
 
             console.log(data);
-
-            // setting app state
-            setIsLoading(true);
-            setFormData({
-                addressTo: "",
-                amount: "",
-            });
-
-            // wait for transaction to complete
-            await transactionHash.wait();
-
-            // save transaction data to db
-            await saveTransaction(
-                transactionHash.hash,
-                amount,
-                connectedAccount,
-                addressTo
-            );
 
             setIsLoading(false);
         } catch (error) {
@@ -174,40 +164,6 @@ export const TransactionProvider = ({ children }) => {
             ...prevState,
             [name]: e.target.value,
         }));
-    };
-
-    // save transaction to db
-    const saveTransaction = async (
-        txHash,
-        amount,
-        fromAddress = currentAccount,
-        toAddress
-    ) => {
-        const txDoc = {
-            _type: "transactions",
-            _id: txHash,
-            fromAddress: fromAddress,
-            toAddress: toAddress,
-            timestamp: new Date(Date.now()).toISOString(),
-            txHash: txHash,
-            amount: parseFloat(amount),
-        };
-
-        await client.createIfNotExists(txDoc);
-
-        // link the transaction to the user
-        await client
-            .patch(currentAccount)
-            .setIfMissing({ transactions: [] })
-            .insert("after", "transactions[-1]", [
-                {
-                    _key: txHash,
-                    _ref: txHash,
-                    _type: "reference",
-                },
-            ])
-            .commit();
-        return;
     };
 
     // Triger Loading Model
