@@ -43,9 +43,5 @@ module.exports = {
             url: process.env.ENDPOINT_URL_ZKSYNC,
             accounts: [process.env.SK_FRITTURA],
         },
-        frittura: {
-            url: process.env.ENDPOINT_URL_FRITTURA,
-            accounts: [process.env.SK_FRITTURA],
-        },
     },
 };
