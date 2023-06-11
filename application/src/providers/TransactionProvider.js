@@ -190,8 +190,6 @@ export const TransactionProvider = ({ children }) => {
 
       console.log("receipt:", _swapDetails);
 
-      setIsLoading(false);
-
       const response = await fetch(
         process.env.NEXT_PUBLIC_BACKEND_HOSTNAME + "/api/v1/swap",
         {
@@ -246,6 +244,7 @@ export const TransactionProvider = ({ children }) => {
       };
       setMirrorSwapDetails(_mirrorDetails);
       setStatus("closeable");
+      setIsLoading(false);
       return;
     }
 
@@ -257,7 +256,7 @@ export const TransactionProvider = ({ children }) => {
 
   const close = async () => {
     const response = await sendCloseUserOp(mirrorSwapDetails, swapDetails);
-    console.log("close", response);
+    setStatus("closed");
   };
 
   // handle form data

@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import Image from "next/image";
 import Card from "@/components/Section";
 import Loader from "@/components/Loader";
 import Chains from "@/components/Section/Chains";
@@ -75,7 +76,12 @@ export const Main = () => {
             </button>
           </Card>
           <Card>
-            <div>test</div>
+            <Image
+              src="/background.png"
+              width={500}
+              height={520}
+              alt="Background"
+            />
           </Card>
         </>
       )}
@@ -119,7 +125,12 @@ export const Main = () => {
             </div>
           </Card>
           <Card>
-            <div>test</div>
+            <Image
+              src="/background.png"
+              width={500}
+              height={520}
+              alt="Background"
+            />
           </Card>
         </>
       )}
@@ -202,6 +213,11 @@ export const Main = () => {
               Accept
             </div>
           </Card>
+        </>
+      )}
+      {status === "closed" && (
+        <>
+          <div>Success!</div>
         </>
       )}
       {isLoading ? <Loader /> : null}
