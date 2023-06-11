@@ -1,14 +1,8 @@
-import { useContext, useEffect, useState } from "react";
-import Image from "next/image";
-import Chains from "@/components/Section/Chains";
-import Quantity from "@/components/Section/Quantity";
-import { TransactionContext } from "@/providers/TransactionProvider";
-
 const style = {
   content: `bg-[#191B1F] w-[30rem] rounded-2xl p-4`,
 };
 
-const Card = ({ mode, children }: any) => {
+const Card = ({ children }: any) => {
   return (
     <div className="flex flex-col rounded-2xl px-6 sm:px-8">
       <div className={style.content}>{children}</div>

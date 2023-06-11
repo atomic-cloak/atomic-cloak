@@ -17,7 +17,6 @@ const style = {
 export const Main = () => {
   const {
     status,
-    isOpen,
     isLoading,
     formData,
     swapDetails,
@@ -197,6 +196,9 @@ export const Main = () => {
               <div className={style.transferPropInput2}>
                 {mirrorSwapDetails.mirrorSwapId}
               </div>
+            </div>
+            <div onClick={(e) => handleSubmit(e)} className={style.swapButton}>
+              Accept
             </div>
           </Card>
         </>

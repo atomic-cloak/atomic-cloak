@@ -66,7 +66,6 @@ export const TransactionProvider = ({ children }) => {
   // global app states
   const [currentAccount, setCurrentAccount] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState("new");
   const [formData, setFormData] = useState({
     addressTo: "",
@@ -251,7 +250,6 @@ export const TransactionProvider = ({ children }) => {
       return;
     }
 
-    setIsCreated(true);
     console.log(response);
     setTimeout(async () => {
       await pollSwap(swapDetails);
