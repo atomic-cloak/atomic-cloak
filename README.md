@@ -31,6 +31,13 @@ Our solution extends the idea of HTLC to Schnorr Timelocked Contracts, based on 
 
 The privacy-protection of Atomic Cloak is based on a mixer + account abstraction. From the outside, STLC counterparties cannot be identified and all requests created at the same time cannot be distinguished from other requests of the same value tier. Also it is impossible to determine the destination chain of tokens, so several cross-chain swaps with random wait times can obfuscate token sender very well.
 
+The web application in this repo provides 3 modes out of the box:
+1. __Fast bridge:__ send tokens to your address on another chain.
+2. __Mixer:__ send tokens to another account on the same chain.
+3. __Cross-chain privacy preserving atomic swap__: send tokens to another account on another chain.
+
+Swaps in these cases are facilitated by tokens of liquidity provider.
+
 ### Liquidity Provision
 
 The Atomic Cloak protocol is agnostic to how the swap counterparties agree on the swap, this logic happens off-chain in the UI. Also the fee tiers are not enforces on the protocol level, but only on the UI level.
@@ -106,11 +113,12 @@ The instance of Atomic Cloak smart contract is deployed on following networks (t
 | sepolia            | `0x6a18426245F240B95378a43769b5688B9794875b` |<span style="color:green">__Yes__</span>|<span style="color:red">__No__</span>|
 | mumbai             | `0xcE250A659fc1090714c2810ec091F7BB95D27eb4` |<span style="color:green">__Yes__</span>|<span style="color:green">__Yes__</span>|
 | optimism goerli    | `0x272e066945678DeB96736a1904734cdFdFF074c6` |<span style="color:green">__Yes__</span>|<span style="color:green">__Yes__</span>|
-| zkSync era testnet | `0x...`                                      |                 |                            |
+|chiado gnosis testnet| ` 0x52854bb581dfAB7cc3F94a38da727D39B757F187 ` |<span style="color:red">__No__</span>|<span style="color:red">__No__</span>|
 | mantle             | `0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d` |<span style="color:red">__No__</span>|<span style="color:red">__No__</span>|
 
+- Being on the list means that the Atomic Cloak protocol is deployed on the network and is is fully functional via on-chain transactions.
 - __UI support__ depends on whether the network is supported by the GraphQL as we use it to facilitate data flow. "Yes" means that the complete lifecycle of an atomic swap could be performed using the provided UI. "No" means that the UI could only open an atomic swap, but finding a counterparty / liquidity provider, secret communication and closing of the swap must be done manually.
-- __Close swap with UserOp in UI__ is possible when the network supports account abstraction features. Note that we support closing with UserOp in UI only for some chains with AA support because of time limitations. 
+- __Close swap with UserOp in UI__ is possible when the network supports account abstraction features. Note that we support closing with UserOp in UI only for some chains with AA support because of time limitations.
 
 ## Account abstraction features
 
@@ -128,3 +136,45 @@ Atomic Cloak project uses two account abstraction features.
 -   Although the Atomic Cloak smart contract supports the ERC-20 atomic swaps, this functionality was not thoroughly tested. Additionally, account abstraction swap close is available only for ether atomic swaps.
 -   Once expired, liquidity provider has to close a swap as soon as possible. Otherwise their counterparty can burn the tokens as gas fees by calling `close` using `userOp`. This happens because `validateUserOp` cannot access the last block timestamp to check whether a swap expired.
 -   Currently liquidity provider does not batch swap openings, it provides only single openings. However, the smart contracts include all necessary code.
+
+## Environment variables
+
+Replace `xxx` with your keys.
+
+```
+PORT=7777
+
+SK_FRITTURA = "xxx"
+BACKEND_PRIVATE_KEY = "xxx"
+
+ETHERSCAN_API_KEY = "xxx"
+POLYGON_API_KEY = "xxx"
+
+BUNDLER_API_KEY_MUMBAI = "xxx"
+BUNDLER_API_KEY_OPTIMISM_GOERLI = "xxx"
+
+ENDPOINT_URL_SEPOLIA = "https://rpc.sepolia.org "
+ENDPOINT_URL_OPTIMISM_GOERLI = "https://goerli.optimism.io/"
+ENDPOINT_URL_MUMBAI = "https://rpc-mumbai.maticvigil.com/"
+ENDPOINT_URL_MANTLE = "https://rpc.testnet.mantle.xyz"
+ENDPOINT_URL_ZKSYNC = "https://mainnet.era.zksync.io"
+ENDPOINT_URL_TAIKO = "https://rpc.test.taiko.xyz"
+
+ENTRY_POINT_ADDRESS = "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"
+
+PROVIDER_SIMPLE_ACCOUNT_SALT = "173350781"
+ATOMIC_CLOAK_SALT = "517044593"
+PROVIDER_SIMPLE_ACCOUNT_ADDRESS = "0xe32Bb2299B5A07C9dc1c971B91E87d6AFc4d6570"
+
+ATOMIC_CLOAK_ADDRESS_SEPOLIA = "0x6a18426245F240B95378a43769b5688B9794875b"
+ATOMIC_CLOAK_ADDRESS_OPTIMISM_GOERLI = "0x272e066945678DeB96736a1904734cdFdFF074c6"
+ATOMIC_CLOAK_ADDRESS_MANTLE = "0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d"
+ATOMIC_CLOAK_ADDRESS_MUMBAI = "0xcE250A659fc1090714c2810ec091F7BB95D27eb4"
+ATOMIC_CLOAK_ADDRESS_ZKSYNC = ""
+ATOMIC_CLOAK_ADDRESS_TAIKO = ""
+
+ERC20_ADDRESS = "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+
+NEXT_PUBLIC_BACKEND_HOSTNAME = "http://localhost:7777"
+BACKEND_HOSTNAME_DEPLOYED = "https://atomiccloakapi.frittura.org"
+```
