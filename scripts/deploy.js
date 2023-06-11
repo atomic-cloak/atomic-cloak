@@ -5,6 +5,7 @@ async function main() {
 
     const ECCUtils = await ethers.getContractFactory("ECCUtils");
     const eccUtils = await ECCUtils.deploy();
+    console.log("ECCUtils deployed to:", eccUtils.address);
 
     const AtomicCloakFactory = await ethers.getContractFactory(
         "AtomicCloakFactory",

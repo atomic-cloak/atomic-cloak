@@ -125,7 +125,7 @@ The instance of Atomic Cloak smart contract is deployed on following networks (t
 
 ## Account abstraction features
 
-Atomic Cloak project uses two account abstraction features.
+The Atomic Cloak project uses two account abstraction features.
 
 1. An instance of Atomic Cloak is also an account abstraction [BaseAccount](https://github.com/eth-infinitism/account-abstraction/blob/main/contracts/core/BaseAccount.sol) with a custom user operation verification logic. This is done so atomic swaps could be closed into a fresh account and the gas is paid from the swap tokens.
    The custom `_validateSignature` function checks the swap commitment opening and allows to close a swap once the corresponding secret is provided. There is no owner logic and no account with a special control of Atomic Cloak contract funds.

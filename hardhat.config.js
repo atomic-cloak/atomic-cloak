@@ -27,6 +27,10 @@ module.exports = {
             url: process.env.ENDPOINT_URL_MUMBAI,
             accounts: [process.env.SK_FRITTURA],
         },
+        goerli: {
+            url: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+            accounts: [process.env.SK_FRITTURA],
+        },
         sepolia: {
             url: process.env.ENDPOINT_URL_SEPOLIA,
             accounts: [process.env.SK_FRITTURA],
@@ -40,8 +44,9 @@ module.exports = {
             accounts: [process.env.SK_FRITTURA],
         },
         zksync: {
-            url: process.env.ENDPOINT_URL_ZKSYNC,
-            accounts: [process.env.SK_FRITTURA],
+            url: "https://testnet.era.zksync.dev",
+            ethNetwork: "https://rpc.ankr.com/eth_goerli", // RPC URL of the network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
+            zksync: true,
         },
     },
 };
