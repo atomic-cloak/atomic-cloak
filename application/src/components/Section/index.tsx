@@ -1,3 +1,3 @@
-import Card from "@/components/Section/Card";
+import {Card, GreenCard, YellowCard} from "@/components/Section/Card";
 
-export default Card;
+export {Card, GreenCard, YellowCard};
