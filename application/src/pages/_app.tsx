@@ -9,6 +9,31 @@ import {
   optimismGoerli,
   zkSyncTestnet,
 } from "wagmi/chains";
+
+const mantleTestnet = {
+    id: 5001,
+    name: "Mantle Testnet",
+     network: "mantle",
+     nativeCurrency: {
+         decimals: 18,
+         name: "Mantle Testnet",
+         symbol: "MNT",
+    },
+     rpcUrls: {
+         default: {
+             http:  ["https://rpc.testnet.mantle.xyz"],
+        },
+         public: {
+             http:  ["https://rpc.testnet.mantle.xyz"],
+        },
+    },
+     blockExplorers: {
+         default: {
+             name: "Mantle Ringwood",
+             url: "https://explorer.testnet.mantle.xyz",
+        },
+    },
+};
 import {
   darkTheme,
   RainbowKitProvider,
@@ -25,7 +50,7 @@ import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { TransactionProvider } from "@/providers/TransactionProvider";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [sepolia, goerli, optimismGoerli, polygonMumbai, gnosisChiado, zkSyncTestnet],
+  [sepolia, goerli, optimismGoerli, polygonMumbai, gnosisChiado, zkSyncTestnet, mantleTestnet],
   [publicProvider()]
 );
 
