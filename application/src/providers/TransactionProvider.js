@@ -25,7 +25,7 @@ const chainIDs = {
     Sepolia: 11155111,
     Mumbai: 80001,
     "Optimism Goerli": 420,
-    Mantle: 5001,
+    "Mantle Testnet": 5001,
     "zkSync Era Testnet": 280,
 };
 
