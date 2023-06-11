@@ -112,11 +112,11 @@ The instance of Atomic Cloak smart contract is deployed on following networks (t
 
 | Networks           | Address                                      |   UI support    |  Close swap with UserOp in UI |
 | ------------------ | -------------------------------------------- |-----------------|----------------------------|
-| sepolia            | `0x6a18426245F240B95378a43769b5688B9794875b` |<span style="color:green">__Yes__</span>|<span style="color:red">__No__</span>|
-| mumbai             | `0xcE250A659fc1090714c2810ec091F7BB95D27eb4` |<span style="color:green">__Yes__</span>|<span style="color:green">__Yes__</span>|
-| optimism goerli    | `0x272e066945678DeB96736a1904734cdFdFF074c6` |<span style="color:green">__Yes__</span>|<span style="color:green">__Yes__</span>|
-|chiado gnosis testnet| ` 0x52854bb581dfAB7cc3F94a38da727D39B757F187 ` |<span style="color:red">__No__</span>|<span style="color:red">__No__</span>|
-| mantle             | `0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d` |<span style="color:red">__No__</span>|<span style="color:red">__No__</span>|
+| sepolia            | `0x6a18426245F240B95378a43769b5688B9794875b` |$\textcolor{green}{\textbf{Yes}}$|$\textcolor{red}{\textbf{No}}$|
+| mumbai             | `0xcE250A659fc1090714c2810ec091F7BB95D27eb4` |$\textcolor{green}{\textbf{Yes}}$|$\textcolor{green}{\textbf{Yes}}$|
+| optimism goerli    | `0x272e066945678DeB96736a1904734cdFdFF074c6` |$\textcolor{green}{\textbf{Yes}}$|$\textcolor{green}{\textbf{Yes}}$|
+|chiado gnosis testnet| ` 0x52854bb581dfAB7cc3F94a38da727D39B757F187 ` |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
+| mantle             | `0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d` |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
 
 - Being on the list means that the Atomic Cloak protocol is deployed on the network and is is fully functional via on-chain transactions.
 - __UI support__ depends on whether the network is supported by the GraphQL as we use it to facilitate data flow. "Yes" means that the complete lifecycle of an atomic swap could be performed using the provided UI. "No" means that the UI could only open an atomic swap, but finding a counterparty / liquidity provider, secret communication and closing of the swap must be done manually.
