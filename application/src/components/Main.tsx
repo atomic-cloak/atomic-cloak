@@ -94,14 +94,7 @@ export const Main = () => {
               {isLoading ? "Swap (Pending)" : "Swap"}
             </button>
           </Card>
-          <Card>
-            <Image
-              src="/background.png"
-              width={500}
-              height={520}
-              alt="Background"
-            />
-          </Card>
+          
         </>
       )}
       {status === "open" && (
@@ -126,11 +119,11 @@ export const Main = () => {
             </div>
 
             <div className={style.formHeader}>
-              <div>Timestamp</div>
+              <div>Expiration time</div>
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {swapDetails.timestamp}
+                {new Date(swapDetails.timestamp* 1000).toUTCString() }
               </div>
             </div>
 
@@ -146,14 +139,7 @@ export const Main = () => {
               Swap Opened (Bundler pending)
             </div>
           </Card>
-          <Card>
-            <Image
-              src="/background.png"
-              width={500}
-              height={520}
-              alt="Background"
-            />
-          </Card>
+          
         </>
       )}
       {status === "closeable" && (
@@ -178,11 +164,11 @@ export const Main = () => {
             </div>
 
             <div className={style.formHeader}>
-              <div>Timestamp</div>
+              <div>Expiration time</div>
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {swapDetails.timestamp}
+              {new Date(swapDetails.timestamp* 1000).toUTCString() }
               </div>
             </div>
 
@@ -218,11 +204,11 @@ export const Main = () => {
             </div>
 
             <div className={style.formHeader}>
-              <div>Timestamp</div>
+              <div>Expiration time</div>
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {mirrorSwapDetails.timelock}
+              {new Date(mirrorSwapDetails.timelock* 1000).toUTCString() }
               </div>
             </div>
 
@@ -265,11 +251,11 @@ export const Main = () => {
             </div>
 
             <div className={style.formHeader}>
-              <div>Timestamp</div>
+              <div>Expiration time </div>
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {swapDetails.timestamp}
+              {new Date(swapDetails.timestamp* 1000).toUTCString() }
               </div>
             </div>
 
@@ -305,11 +291,11 @@ export const Main = () => {
             </div>
 
             <div className={style.formHeader}>
-              <div>Timestamp</div>
+              <div>Expiration time</div>
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {mirrorSwapDetails.timelock}
+              {new Date(mirrorSwapDetails.timelock* 1000).toUTCString() }
               </div>
             </div>
 
