@@ -5,6 +5,7 @@ import Loader from "@/components/Loader";
 import Chains from "@/components/Section/Chains";
 import Quantity from "@/components/Section/Quantity";
 import { TransactionContext } from "@/providers/TransactionProvider";
+import { ethers } from "ethers";
 
 const style = {
   content: `bg-[#191B1F] w-[30rem] rounded-2xl p-4`,
@@ -12,7 +13,25 @@ const style = {
   transferPropInput: `bg-transparent placeholder:text-[#B2B9D2] outline-none w-full`,
   transferPropInput2: `bg-transparent text-white outline-none w-full`,
   transferPropContainer: `bg-[#20242A] my-3 rounded-2xl p-4 border border-[#20242A] hover:border-[#41444F] flex justify-between`,
-  swapButton: `bg-[#3898FF] my-2 rounded-2xl py-4 px-8 text-xl font-semibold flex items-center justify-center cursor-pointer border border-[#2172E5] hover:border-[#234169]`,
+  swapButton: `bg-[#3898FF] w-full my-2 rounded-2xl py-4 px-8 text-xl font-semibold flex items-center justify-center cursor-pointer border border-[#2172E5] hover:border-[#234169]`,
+  swapPassed: `bg-[#444444] my-2 rounded-2xl py-4 px-8 text-xl font-semibold flex items-center justify-center`,
+};
+
+const getChainName = (chainId: number) =>{
+    if(chainId == 11155111){
+        return "Sepolia";
+    }else if(chainId == 80001){
+        return "Mumbai";
+    }else if(chainId == 420){
+        return "Optimism Goerli";
+    }else if(chainId == 324){
+        return "ZkSyncEra";
+    }else if(chainId == 5001){
+        return "Mantle";
+    } else {
+        return "Unknown";
+    }
+
 };
 
 export const Main = () => {
@@ -72,7 +91,7 @@ export const Main = () => {
               onClick={(e) => handleSubmit(e)}
               className={style.swapButton}
             >
-              Swap
+              {isLoading ? "Swap (Pending)" : "Swap"}
             </button>
           </Card>
           <Card>
@@ -93,7 +112,7 @@ export const Main = () => {
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {swapDetails.value}
+              {ethers.utils.formatEther(swapDetails.value).toString()}
               </div>
             </div>
 
@@ -102,7 +121,7 @@ export const Main = () => {
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {swapDetails.chainID}
+                {getChainName(swapDetails.chainID)}
               </div>
             </div>
 
@@ -122,6 +141,9 @@ export const Main = () => {
               <div className={style.transferPropInput2}>
                 {swapDetails.swapID}
               </div>
+            </div>
+            <div className={style.swapPassed}>
+              Swap Opened (Bundler pending)
             </div>
           </Card>
           <Card>
@@ -142,7 +164,7 @@ export const Main = () => {
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {swapDetails.value}
+                {ethers.utils.formatEther(swapDetails.value).toString()}
               </div>
             </div>
 
@@ -151,7 +173,7 @@ export const Main = () => {
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {swapDetails.chainID}
+              {getChainName(swapDetails.chainID)}
               </div>
             </div>
 
@@ -172,6 +194,9 @@ export const Main = () => {
                 {swapDetails.swapID}
               </div>
             </div>
+            <div className={style.swapPassed}>
+              Swap Opened
+            </div>
           </Card>
           <Card>
             <div className={style.formHeader}>
@@ -179,7 +204,7 @@ export const Main = () => {
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {mirrorSwapDetails.value}
+              {ethers.utils.formatEther(mirrorSwapDetails.value).toString()}
               </div>
             </div>
 
@@ -188,7 +213,7 @@ export const Main = () => {
             </div>
             <div className={style.transferPropContainer}>
               <div className={style.transferPropInput2}>
-                {mirrorSwapDetails.receivingChainID}
+                {getChainName(mirrorSwapDetails.receivingChainID)}
               </div>
             </div>
 
@@ -209,15 +234,97 @@ export const Main = () => {
                 {mirrorSwapDetails.mirrorSwapId}
               </div>
             </div>
-            <div onClick={() => close()} className={style.swapButton}>
+            <button
+              onClick={() => close()}
+              className={style.swapButton}
+            >
               Accept
-            </div>
+            </button>
           </Card>
         </>
       )}
       {status === "closed" && (
         <>
-          <div>Success!</div>
+          <Card>
+            <div className={style.formHeader}>
+              <div>Value</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+              {ethers.utils.formatEther(swapDetails.value).toString()}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
+              <div>Chain</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+              {getChainName(swapDetails.chainID)}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
+              <div>Timestamp</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+                {swapDetails.timestamp}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
+              <div>Swap ID</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+                {swapDetails.swapID}
+              </div>
+            </div>
+            <div className={style.swapPassed}>
+              Swap Opened
+            </div>
+          </Card>
+          <Card>
+            <div className={style.formHeader}>
+              <div>Value</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+              {ethers.utils.formatEther(mirrorSwapDetails.value).toString()}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
+              <div>Chain</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+              {getChainName(mirrorSwapDetails.receivingChainID)}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
+              <div>Timestamp</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+                {mirrorSwapDetails.timelock}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
+              <div>Swap ID</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+                {mirrorSwapDetails.mirrorSwapId}
+              </div>
+            </div>
+            <div className={style.swapPassed}>
+              Success
+            </div>
+          </Card>
         </>
       )}
       {isLoading ? <Loader /> : null}
