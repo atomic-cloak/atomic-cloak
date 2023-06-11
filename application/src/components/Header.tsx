@@ -76,7 +76,7 @@ const Header = () => {
                             className={`${style.buttonAccent} ${style.buttonPadding}`}
                           >
                             <div className={`${style.buttonTextContainer}`}>
-                              Wrong Network
+                              Unsupported Network
                             </div>
                           </button>
                         );

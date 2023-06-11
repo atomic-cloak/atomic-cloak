@@ -77,6 +77,8 @@ export const TransactionProvider = ({ children }) => {
         receivingChainName: "Sepolia",
     });
     const [swapDetails, setSwapDetails] = useState({
+        sender: "",
+        recipient: "",
         receivingChainName: "",
         timestamp: 0,
         swapID: "",
@@ -86,6 +88,8 @@ export const TransactionProvider = ({ children }) => {
         value: "",
     });
     const [mirrorSwapDetails, setMirrorSwapDetails] = useState({
+        sender: "",
+        recipient: "",
         receivingChainName: "",
         timestamp: 0,
         swapID: "",
@@ -180,7 +184,10 @@ export const TransactionProvider = ({ children }) => {
             console.log("swapId:", swapId, "from", qx, qy);
             console.log("receipt:", receipt);
             const _sharedSecret = ethers.utils.randomBytes(32);
+            const _sender = await provider.getSigner().getAddress();
             const _swapDetails = {
+                sender: _sender,
+                recipient: addressTo,
                 receivingChainName: receivingChainName,
                 timestamp: timestampBefore + 120,
                 swapID: swapId,

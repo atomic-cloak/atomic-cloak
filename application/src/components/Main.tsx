@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import Image from "next/image";
-import Card from "@/components/Section";
+import {Card, GreenCard, YellowCard} from "@/components/Section";
 import Loader from "@/components/Loader";
 import Chains from "@/components/Section/Chains";
 import Quantity from "@/components/Section/Quantity";
@@ -59,7 +59,7 @@ export const Main = () => {
     <div className="-mx-4 grid max-w-2xl grid-cols-1 gap-y-10 sm:mx-auto lg:-mx-8 lg:max-w-none lg:grid-cols-2 xl:mx-0 xl:gap-x-8 place-items-center">
       {status === "new" && (
         <>
-          <Card>
+          <GreenCard>
             <div className={style.formHeader}>
               <div>Value</div>
             </div>
@@ -91,15 +91,15 @@ export const Main = () => {
               onClick={(e) => handleSubmit(e)}
               className={style.swapButton}
             >
-              {isLoading ? "Swap (Pending)" : "Swap"}
+              {isLoading ? "Swap (pending)" : "Swap"}
             </button>
-          </Card>
+          </GreenCard>
           
         </>
       )}
       {status === "open" && (
         <>
-          <Card>
+          <GreenCard>
             <div className={style.formHeader}>
               <div>Value</div>
             </div>
@@ -128,6 +128,15 @@ export const Main = () => {
             </div>
 
             <div className={style.formHeader}>
+              <div>To</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+                {swapDetails.recipient}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
               <div>Swap ID</div>
             </div>
             <div className={style.transferPropContainer}>
@@ -136,15 +145,15 @@ export const Main = () => {
               </div>
             </div>
             <div className={style.swapPassed}>
-              Swap Opened (Bundler pending)
+              Swap Opened (waiting for mirror swap)
             </div>
-          </Card>
+          </GreenCard>
           
         </>
       )}
       {status === "closeable" && (
         <>
-          <Card>
+          <GreenCard>
             <div className={style.formHeader}>
               <div>Value</div>
             </div>
@@ -173,6 +182,15 @@ export const Main = () => {
             </div>
 
             <div className={style.formHeader}>
+              <div>To</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+                {swapDetails.recipient}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
               <div>Swap ID</div>
             </div>
             <div className={style.transferPropContainer}>
@@ -183,8 +201,8 @@ export const Main = () => {
             <div className={style.swapPassed}>
               Swap Opened
             </div>
-          </Card>
-          <Card>
+          </GreenCard>
+          <YellowCard>
             <div className={style.formHeader}>
               <div>Value</div>
             </div>
@@ -213,6 +231,15 @@ export const Main = () => {
             </div>
 
             <div className={style.formHeader}>
+              <div>From</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+                {mirrorSwapDetails.sender}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
               <div>Swap ID</div>
             </div>
             <div className={style.transferPropContainer}>
@@ -224,14 +251,14 @@ export const Main = () => {
               onClick={() => close()}
               className={style.swapButton}
             >
-              Accept
+              Close Swap
             </button>
-          </Card>
+          </YellowCard>
         </>
       )}
       {status === "closed" && (
         <>
-          <Card>
+          <GreenCard>
             <div className={style.formHeader}>
               <div>Value</div>
             </div>
@@ -260,6 +287,15 @@ export const Main = () => {
             </div>
 
             <div className={style.formHeader}>
+              <div>To</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+                {mirrorSwapDetails.recipient}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
               <div>Swap ID</div>
             </div>
             <div className={style.transferPropContainer}>
@@ -270,8 +306,8 @@ export const Main = () => {
             <div className={style.swapPassed}>
               Swap Opened
             </div>
-          </Card>
-          <Card>
+          </GreenCard>
+          <YellowCard>
             <div className={style.formHeader}>
               <div>Value</div>
             </div>
@@ -300,6 +336,15 @@ export const Main = () => {
             </div>
 
             <div className={style.formHeader}>
+              <div>From</div>
+            </div>
+            <div className={style.transferPropContainer}>
+              <div className={style.transferPropInput2}>
+                {mirrorSwapDetails.sender}
+              </div>
+            </div>
+
+            <div className={style.formHeader}>
               <div>Swap ID</div>
             </div>
             <div className={style.transferPropContainer}>
@@ -310,7 +355,7 @@ export const Main = () => {
             <div className={style.swapPassed}>
               Success
             </div>
-          </Card>
+          </YellowCard>
         </>
       )}
       {isLoading ? <Loader /> : null}
