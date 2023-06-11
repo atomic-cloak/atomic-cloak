@@ -246,7 +246,6 @@ export const TransactionProvider = ({ children }) => {
       };
       setMirrorSwapDetails(_mirrorDetails);
       setStatus("closeable");
-      //await sendCloseUserOp(data.result, swapDetails);
       return;
     }
 
@@ -254,6 +253,11 @@ export const TransactionProvider = ({ children }) => {
     setTimeout(async () => {
       await pollSwap(swapDetails);
     }, 1000);
+  };
+
+  const close = async () => {
+    const response = await sendCloseUserOp(mirrorSwapDetails, swapDetails);
+    console.log("close", response);
   };
 
   // handle form data
@@ -352,6 +356,7 @@ export const TransactionProvider = ({ children }) => {
         mirrorSwapDetails,
         isLoading,
         status,
+        close,
       }}
     >
       {children}

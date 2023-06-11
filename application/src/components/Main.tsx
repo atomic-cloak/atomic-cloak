@@ -16,6 +16,7 @@ const style = {
 
 export const Main = () => {
   const {
+    close,
     status,
     isLoading,
     formData,
@@ -197,7 +198,7 @@ export const Main = () => {
                 {mirrorSwapDetails.mirrorSwapId}
               </div>
             </div>
-            <div onClick={(e) => handleSubmit(e)} className={style.swapButton}>
+            <div onClick={() => close()} className={style.swapButton}>
               Accept
             </div>
           </Card>
