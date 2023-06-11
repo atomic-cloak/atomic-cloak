@@ -28,7 +28,9 @@ const getChainName = (chainId: number) =>{
         return "ZkSyncEra";
     }else if(chainId == 5001){
         return "Mantle";
-    } else {
+    } else if(chainId == 280){
+        return "ZkSyncEraTestnet";
+    }else {
         return "Unknown";
     }
 
