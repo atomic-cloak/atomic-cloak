@@ -76,7 +76,7 @@ export const TransactionProvider = ({ children }) => {
     const [formData, setFormData] = useState({
         addressTo: "",
         amount: "0.001",
-        receivingChainName: "Sepolia",
+        receivingChainName: "Mumbai",
     });
     const [swapDetails, setSwapDetails] = useState({
         sender: "",

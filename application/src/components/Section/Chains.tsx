@@ -11,14 +11,15 @@ const style = {
   container: `relative w-full cursor-default text-white border border-[#20242A] hover:border-[#41444F] rounded-2xl bg-[#20242A] py-4 pl-3 pr-10 text-left`,
 };
 
+// FIXME: We only support those chains for which we have a subgraph. We can expand on this later.
 const chains = [
-  { name: "Sepolia" },
-  { name: "Goerli" },
+//   { name: "Sepolia" },
+//   { name: "Goerli" },
   { name: "Optimism Goerli" },
   { name: "Mumbai" },
-  { name: "Gnosis Chiado" },
-  { name: "zkSync Era Testnet" },
-{ name: "Mantle Testnet" },
+//   { name: "Gnosis Chiado" },
+//   { name: "zkSync Era Testnet" },
+// { name: "Mantle Testnet" },
 ];
 
 const Chains = () => {
