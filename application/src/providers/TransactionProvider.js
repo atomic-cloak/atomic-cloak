@@ -295,7 +295,7 @@ export const TransactionProvider = ({ children }) => {
         console.log("secretKey:", secretKey);
 
         let s = secretKey.toString(16);
-        while (s.length < 32) {
+        while (s.length < 64) {
             s = "0" + s;
         }
 
