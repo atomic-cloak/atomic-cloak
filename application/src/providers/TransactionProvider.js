@@ -67,12 +67,22 @@ export const TransactionProvider = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [status, setStatus] = useState("new");
   const [formData, setFormData] = useState({
     addressTo: "",
     amount: "0.001",
     receivingChainName: "Sepolia",
   });
   const [swapDetails, setSwapDetails] = useState({
+    receivingChainName: "",
+    timestamp: 0,
+    swapID: "",
+    chainID: "",
+    secret: "",
+    sharedSecret: "",
+    value: "",
+  });
+  const [mirrorSwapDetails, setMirrorSwapDetails] = useState({
     receivingChainName: "",
     timestamp: 0,
     swapID: "",
@@ -177,6 +187,7 @@ export const TransactionProvider = ({ children }) => {
         value: parsedAmount.toString(),
       };
       setSwapDetails(_swapDetails);
+      setStatus("open");
 
       console.log("receipt:", _swapDetails);
 
@@ -223,7 +234,20 @@ export const TransactionProvider = ({ children }) => {
     const data = await response.json();
     console.log(data);
     if (data.result) {
-      await sendCloseUserOp(data.result, swapDetails);
+      const _mirrorDetails = {
+        mirrorSwapId: data.result.mirrorSwapId,
+        receivingChainID: data.result.receivingChainID,
+        recipient: data.result.recipient,
+        sender: data.result.sender,
+        sendingChainID: data.result.sendingChainID,
+        sharedSecret: data.result.sharedSecret,
+        timelock: data.result.timelock,
+        tokenContract: data.result.tokenContract,
+        value: data.result.value,
+      };
+      setMirrorSwapDetails(_mirrorDetails);
+      setStatus("closeable");
+      //await sendCloseUserOp(data.result, swapDetails);
       return;
     }
 
@@ -327,7 +351,9 @@ export const TransactionProvider = ({ children }) => {
         handleChange,
         formData,
         swapDetails,
+        mirrorSwapDetails,
         isLoading,
+        status,
       }}
     >
       {children}
