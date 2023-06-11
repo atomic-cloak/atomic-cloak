@@ -113,12 +113,12 @@ The instance of Atomic Cloak smart contract is deployed on following networks (t
 
 | Networks              | Address                                      |   UI support    |  Close swap with UserOp in UI |
 | ------------------    | -------------------------------------------- |-----------------|----------------------------|
-| sepolia               | `0x6a18426245F240B95378a43769b5688B9794875b` |$\textcolor{green}{\textbf{Yes}}$|$\textcolor{red}{\textbf{No}}$|
-| mumbai                | `0xcE250A659fc1090714c2810ec091F7BB95D27eb4` |$\textcolor{green}{\textbf{Yes}}$|$\textcolor{green}{\textbf{Yes}}$|
-| optimism goerli       | `0x272e066945678DeB96736a1904734cdFdFF074c6` |$\textcolor{green}{\textbf{Yes}}$|$\textcolor{green}{\textbf{Yes}}$|
-|chiado gnosis testnet  | `0x52854bb581dfAB7cc3F94a38da727D39B757F187` |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
-|zkSync era testnet     | `0xF42d539FFd4A0Ef28aD9b04cF2a236d0a443F70E` |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
-| mantle                | `0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d` |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
+| sepolia               | [`0x6a18426245F240B95378a43769b5688B9794875b`](https://sepolia.etherscan.io/address/0x6a18426245F240B95378a43769b5688B9794875b) |$\textcolor{green}{\textbf{Yes}}$|$\textcolor{red}{\textbf{No}}$|
+| mumbai                | [`0xcE250A659fc1090714c2810ec091F7BB95D27eb4`](https://mumbai.polygonscan.com/address/0xce250a659fc1090714c2810ec091f7bb95d27eb4) |$\textcolor{green}{\textbf{Yes}}$|$\textcolor{green}{\textbf{Yes}}$|
+| optimism goerli       | [`0x272e066945678DeB96736a1904734cdFdFF074c6`](https://goerli-optimism.etherscan.io/address/0x272e066945678deb96736a1904734cdfdff074c6) |$\textcolor{green}{\textbf{Yes}}$|$\textcolor{green}{\textbf{Yes}}$|
+|chiado gnosis testnet  | [`0x52854bb581dfAB7cc3F94a38da727D39B757F187`](https://blockscout.com/gnosis/chiado/address/0x52854bb581dfAB7cc3F94a38da727D39B757F187) |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
+|zkSync era testnet     | [`0xF42d539FFd4A0Ef28aD9b04cF2a236d0a443F70E`](https://goerli.explorer.zksync.io/address/0xF42d539FFd4A0Ef28aD9b04cF2a236d0a443F70E) |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
+| mantle                | [`0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d`](https://explorer.testnet.mantle.xyz/address/0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d) |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
 
 -   Being on the list means that the Atomic Cloak protocol is deployed on the network and is is fully functional via on-chain transactions.
 -   **UI support** depends on whether the network is supported by the GraphQL as we use it to facilitate data flow. "Yes" means that the complete lifecycle of an atomic swap could be performed using the provided UI. "No" means that the UI could only open an atomic swap, but finding a counterparty / liquidity provider, secret communication and closing of the swap must be done manually.
