@@ -26,7 +26,7 @@ const chainIDs = {
     Mumbai: 80001,
     "Optimism Goerli": 420,
     Mantle: 5001,
-    ZkSyncEraTestnet: 280,
+    "zkSync Era Testnet": 280,
 };
 
 const rpcProviders = {
