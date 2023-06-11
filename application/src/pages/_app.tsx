@@ -7,6 +7,7 @@ import {
   gnosisChiado,
   polygonMumbai,
   optimismGoerli,
+  zkSyncTestnet,
 } from "wagmi/chains";
 import {
   darkTheme,
@@ -24,7 +25,7 @@ import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { TransactionProvider } from "@/providers/TransactionProvider";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [sepolia, goerli, optimismGoerli, polygonMumbai, gnosisChiado],
+  [sepolia, goerli, optimismGoerli, polygonMumbai, gnosisChiado, zkSyncTestnet],
   [publicProvider()]
 );
 
