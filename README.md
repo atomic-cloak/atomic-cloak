@@ -107,7 +107,7 @@ At ETHPrague, Atomic Cloak is just a minimal proof of concept. However we believ
 
 ## Deployments
 
-UI is deployed at https://atomiccloak.frittura.org/.
+UI is deployed at https://atomiccloak.frittura.org/. UI currently supports only mumbai and optimism goerli as receiving chains because the swap closure is done with a userOperation and we implemented account abstraction only on these two chains.
 
 The instance of Atomic Cloak smart contract is deployed on following networks (to be updated):
 
