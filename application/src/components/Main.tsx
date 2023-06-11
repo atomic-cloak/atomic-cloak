@@ -42,7 +42,7 @@ export const Main = () => {
         <>
           <Card>
             <div className={style.formHeader}>
-              <div>Quantity</div>
+              <div>Value</div>
             </div>
             <Quantity />
             <div className={style.formHeader}>
