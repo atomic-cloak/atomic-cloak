@@ -17,6 +17,7 @@ const chains = [
   { name: "Optimism Goerli" },
   { name: "Mumbai" },
   { name: "Gnosis Chiado" },
+{ name: "ZkSyncEraTestnet" },
 ];
 
 const Chains = () => {

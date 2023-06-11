@@ -18,14 +18,15 @@ const contractAddresses = {
     80001: "0xcE250A659fc1090714c2810ec091F7BB95D27eb4",
     420: "0x272e066945678DeB96736a1904734cdFdFF074c6",
     5001: "0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d",
+    280: "0xF42d539FFd4A0Ef28aD9b04cF2a236d0a443F70E",
 };
 
 const chainIDs = {
     Sepolia: 11155111,
     Mumbai: 80001,
     "Optimism Goerli": 420,
-    ZkSyncEra: 324,
     Mantle: 5001,
+    ZkSyncEraTestnet: 280,
 };
 
 const rpcProviders = {
@@ -33,6 +34,7 @@ const rpcProviders = {
     80001: "https://rpc-mumbai.maticvigil.com/",
     420: "https://goerli.optimism.io/",
     5001: "https://rpc.testnet.mantle.xyz",
+    280: "https://testnet.era.zksync.dev",
 };
 
 // get deployed contract
@@ -298,7 +300,6 @@ export const TransactionProvider = ({ children }) => {
         while (s.length < 64) {
             s = "0" + s;
         }
-
         const nonce = await atomicCloak.getNonce();
         const payload = {
             jsonrpc: "2.0",
