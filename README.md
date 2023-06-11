@@ -119,6 +119,7 @@ The instance of Atomic Cloak smart contract is deployed on following networks (t
 |chiado gnosis testnet  | [`0x52854bb581dfAB7cc3F94a38da727D39B757F187`](https://blockscout.com/gnosis/chiado/address/0x52854bb581dfAB7cc3F94a38da727D39B757F187) |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
 |zkSync era testnet     | [`0xF42d539FFd4A0Ef28aD9b04cF2a236d0a443F70E`](https://goerli.explorer.zksync.io/address/0xF42d539FFd4A0Ef28aD9b04cF2a236d0a443F70E) |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
 | mantle                | [`0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d`](https://explorer.testnet.mantle.xyz/address/0xC0E46AC8E2db831D0D634B8a9b0A5f32fB99c61d) |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
+| taiko                | [`0x33d68CA687f49c2b6CEa605C1B4783652358c722`](https://explorer.test.taiko.xyz/address/0x33d68CA687f49c2b6CEa605C1B4783652358c722) |$\textcolor{red}{\textbf{No}}$|$\textcolor{red}{\textbf{No}}$|
 
 -   Being on the list means that the Atomic Cloak protocol is deployed on the network and is is fully functional via on-chain transactions.
 -   **UI support** depends on whether the network is supported by the GraphQL as we use it to facilitate data flow. UI can accept atomic swaps on chains that support GraphQL, but it can successfully open atomic swaps on all chains listed above.
